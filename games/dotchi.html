@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Milli Choice - Milli Games</title>
+  <meta property="og:title" content="Milli Choice">
+  <meta property="og:description" content="一瞬の判断が勝負！ミリプロに関する二択クイズに挑戦。素早く選んで連続正解を目指そう！">
+  <meta property="og:image" content="https://milli-games.onrender.com/images/ogp.png">
+  <meta property="og:url" content="https://milli-games.onrender.com/games/dotchi.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Milli Games">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../images/icon/favicon.ico" sizes="any">
+  <link rel="icon" href="../images/icon/192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="../images/games/icon/Milli Choice-icon.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="../images/icon/192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="../images/icon/518.png" sizes="518x518">
+  <link rel="apple-touch-icon" href="../images/games/icon/Milli Choice-icon.png" sizes="192x192">
+  <link rel="stylesheet" href="dotchi.css">
+  <link rel="stylesheet" href="../cursor.css">
+</head>
+<body>
+  <div id="top-bar">
+    <a href="../index.html"><img src="../images/rogo.png" alt="Milli Games" class="header-logo"></a>
+    <img src="../images/games/rogo/Milli Choice-rogo.png" alt="Milli Choice" class="game-logo">
+  </div>
+
+  <div id="game-wrapper">
+    <!-- ===== スタート画面 ===== -->
+    <div id="overlay-start" class="overlay active">
+      <div class="overlay-inner">
+        <img src="../images/games/rogo/Milli Choice-rogo.png" alt="Milli Choice" class="game-logo-banner">
+        <p class="subtitle">音ノ乃ののの曲に合わせて即答二択！</p>
+        <div class="desc-text">
+          <span>曲に合わせて表示される二択クイズに</span>
+          <span>制限時間内に答えてハイスコアを目指せ！</span>
+          <span>速さ＆正確さが鍵！</span>
+        </div>
+        <div class="controls-info">
+          <span>🎮 A / ← で左の選択肢</span>
+          <span>🎮 D / → で右の選択肢</span>
+        </div>
+        <div class="singer-select">
+          <span class="singer-label">歌唱バージョン</span>
+          <div class="singer-options">
+            <label class="singer-option" data-video="VfZaDBPnzqs">
+              <input type="radio" name="singer" value="VfZaDBPnzqs" checked>
+              <span class="singer-name">音ノ乃のの</span>
+            </label>
+            <label class="singer-option" data-video="fHaRxiDVCjE">
+              <input type="radio" name="singer" value="fHaRxiDVCjE">
+              <span class="singer-name">音ノ瀬らこ</span>
+            </label>
+            <label class="singer-option" data-video="NAoBxWcJAG0">
+              <input type="radio" name="singer" value="NAoBxWcJAG0">
+              <span class="singer-name">小廻こま</span>
+            </label>
+          </div>
+        </div>
+        <button id="btn-start" class="btn-start">スタート</button>
+      </div>
+    </div>
+
+    <!-- ===== プレイ画面 ===== -->
+    <div id="screen-play">
+      <div id="hud-row">
+        <span class="hud-item" id="hud-progress">Q1 / 9</span>
+        <span class="hud-item" id="hud-combo">COMBO <span id="combo-display">0</span></span>
+        <span class="hud-item" id="hud-accuracy">正解率 <span id="accuracy-display">--</span></span>
+      </div>
+
+      <div id="play-area">
+        <div id="yt-player-wrap">
+          <div id="yt-player"></div>
+        </div>
+        <div id="timer-bar-track">
+          <div id="timer-bar-fill"></div>
+        </div>
+        <div id="beat-overlay" class="beat-hidden">
+          <div id="beat-circle"></div>
+          <div id="beat-number"></div>
+          <div id="beat-label"></div>
+        </div>
+        <div id="question-card">
+          <div id="q-difficulty" class="diff-badge diff-beginner">基本</div>
+          <div id="q-number">Q1</div>
+          <div id="q-text">問題文がここに表示されます</div>
+          <div id="options-row">
+            <button id="btn-left" class="option-btn">
+              <span class="option-key-hint">A</span>
+              <span class="option-text" id="left-text">左</span>
+            </button>
+            <button id="btn-right" class="option-btn">
+              <span class="option-key-hint">D</span>
+              <span class="option-text" id="right-text">右</span>
+            </button>
+          </div>
+        </div>
+        <div id="feedback-overlay" class="feedback-hidden">
+          <div id="feedback-inner">
+            <div id="feedback-icon"></div>
+            <div id="feedback-text"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="controls-hint">
+        <kbd>A</kbd> <kbd>←</kbd> 左の選択肢 &nbsp;|&nbsp; <kbd>D</kbd> <kbd>→</kbd> 右の選択肢
+      </div>
+    </div>
+
+    <!-- ===== リザルト画面 ===== -->
+    <div id="overlay-result" class="overlay">
+      <div class="overlay-inner">
+        <img src="../images/games/rogo/Milli Choice-rogo.png" alt="Milli Choice" class="game-logo-banner">
+        <h2>リザルト</h2>
+        <div id="result-rank" class="rank-badge">-</div>
+        <p class="overlay-score">スコア: <span id="final-score">0</span></p>
+        <div id="result-details">
+          <p>正解: <span id="result-correct">0</span> / <span id="result-total">9</span></p>
+          <p>正解率: <span id="result-accuracy">0%</span></p>
+          <p>最大コンボ: <span id="result-maxcombo">0</span></p>
+        </div>
+        <div id="result-perf" class="result-breakdown">
+          <span>基本 <span id="r-beginner">0/0</span></span>
+          <span>ふつう <span id="r-intermediate">0/0</span></span>
+          <span>難問 <span id="r-advanced">0/0</span></span>
+        </div>
+        <button id="btn-retry" class="btn-primary">もう一度遊ぶ</button>
+        <div id="share-buttons">
+          <button id="btn-save" class="btn-share">ダウンロード</button>
+          <button id="btn-share" class="btn-share">共有</button>
+          <button id="btn-x" class="btn-x">Xでポスト</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <canvas id="share-canvas" style="display:none"></canvas>
+
+  <script src="dotchi.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="../cursor.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../firebase-init.js"></script>
+</body>
+</html>

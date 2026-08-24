@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Milli Pulse - Milli Games</title>
+  <meta property="og:title" content="Milli Pulse">
+  <meta property="og:description" content="ミリプロ楽曲で遊べるリズムゲーム。ノーツを叩いてコンボをつなぎ、高スコアを目指そう。ハードモードにも対応！">
+  <meta property="og:image" content="https://milli-games.onrender.com/images/ogp.png">
+  <meta property="og:url" content="https://milli-games.onrender.com/games/music.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Milli Games">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../images/icon/favicon.ico" sizes="any">
+  <link rel="icon" href="../images/icon/192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="../images/games/icon/Milli Pulse -icon.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="../images/icon/192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="../images/icon/518.png" sizes="518x518">
+  <link rel="apple-touch-icon" href="../images/games/icon/Milli Pulse -icon.png" sizes="192x192">
+  <link rel="stylesheet" href="music.css">
+  <link rel="stylesheet" href="../cursor.css">
+</head>
+<body>
+  <div id="top-bar">
+    <a href="../index.html" id="back-link"><img src="../images/rogo.png" alt="Milli Games" class="header-logo"></a>
+    <img src="../images/games/rogo/Milli Pulse-rogo.png" alt="Milli Pulse" class="game-logo">
+    <span id="song-title">曲を選択してください</span>
+  </div>
+
+  <div id="game-wrapper">
+    <!-- YouTube動画エリア -->
+    <div id="video-area">
+      <div id="player-container">
+        <div id="player"></div>
+      </div>
+      <div id="video-status-bar">
+        <span id="video-status">YouTube プレーヤーを読み込み中...</span>
+      </div>
+    </div>
+
+    <!-- ゲームエリア -->
+    <div id="game-area">
+      <!-- スコア・HUD -->
+      <div id="hud-row">
+        <div class="hud-item">
+          <span class="hud-label">SCORE</span>
+          <span class="hud-value" id="score">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">BEST</span>
+          <span class="hud-value" id="best-score">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">COMBO</span>
+          <span class="hud-value" id="combo">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">JUDGE</span>
+          <span class="hud-value" id="judge">-</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">ACCURACY</span>
+          <span class="hud-value" id="accuracy">100%</span>
+        </div>
+        <div class="hud-item" id="offset-hud" style="display:none">
+          <span class="hud-label">OFFSET</span>
+          <span class="hud-value" id="offset-display">0ms</span>
+        </div>
+        <button id="quit-btn" aria-label="終了">&#x2715;</button>
+      </div>
+
+      <!-- ゲームボード -->
+      <div id="board-wrapper">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- レーンボタン（スマホ用） -->
+        <div id="lane-buttons">
+          <button class="lane-btn" data-lane="0">D</button>
+          <button class="lane-btn" data-lane="1">F</button>
+          <button class="lane-btn" data-lane="2">J</button>
+          <button class="lane-btn" data-lane="3">K</button>
+        </div>
+
+        <!-- 曲選択画面 -->
+        <div id="overlay-song-select" class="overlay active">
+          <div class="overlay-inner">
+            <img src="../images/games/rogo/Milli Pulse-rogo.png" alt="Milli Pulse" class="game-logo-banner">
+            <h2>曲を選択</h2>
+            <div class="song-list" id="song-list"></div>
+          </div>
+        </div>
+
+        <!-- 設定画面 -->
+        <div id="overlay-start" class="overlay">
+          <div class="overlay-inner">
+            <h2 id="settings-song-title">Princess Viral</h2>
+            <p class="overlay-artist" id="settings-song-artist">音ノ乃のの</p>
+
+            <div class="config-section">
+              <label class="config-label">難易度</label>
+              <div class="diff-buttons">
+                <button class="diff-btn" data-diff="easy">EASY</button>
+                <button class="diff-btn active" data-diff="normal">NORMAL</button>
+                <span class="diff-btn-wrapper" id="hard-wrapper">
+                  <button class="diff-btn disabled" data-diff="hard">HARD</button>
+                  <span class="diff-tooltip">準備中</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="config-section">
+              <label class="config-label">ズレ調整 <span id="offset-value">0ms</span></label>
+              <div class="offset-row">
+                <input type="range" id="offset-slider" min="-300" max="300" value="0" step="10">
+                <button id="btn-test-sound" class="btn-small" title="テスト音を鳴らす">&#x1F50A;</button>
+              </div>
+            </div>
+
+            <button id="btn-start" class="btn-primary">再生してスタート</button>
+            <button id="btn-back-select" class="btn-text">曲を選び直す</button>
+          </div>
+        </div>
+
+        <!-- リザルト画面 -->
+        <div id="overlay-result" class="overlay">
+          <div class="overlay-inner">
+            <h2>リザルト</h2>
+            <div id="result-header">
+              <p id="result-song-title" class="result-song-title">Princess Viral</p>
+              <p class="result-difficulty" id="result-difficulty">NORMAL</p>
+            </div>
+            <p class="overlay-score">スコア: <span id="final-score">0</span></p>
+            <div id="result-judges"></div>
+            <p class="overlay-acc" id="final-accuracy">ACCURACY: 0%</p>
+            <p class="overlay-best" id="best-result"></p>
+            <button id="btn-retry" class="btn-primary">もう一度遊ぶ</button>
+            <div id="share-buttons">
+              <button id="btn-save" class="btn-share">ダウンロード</button>
+              <button id="btn-share" class="btn-share">共有</button>
+              <button id="btn-x" class="btn-x">Xでポスト</button>
+            </div>
+            <button id="btn-back-select-result" class="btn-text">曲を選び直す</button>
+          </div>
+        </div>
+      </div>
+
+      <canvas id="share-canvas" style="display:none"></canvas>
+
+      <!-- 操作説明 -->
+      <div id="controls-hint">
+        PC: <kbd>D</kbd> <kbd>F</kbd> <kbd>J</kbd> <kbd>K</kbd> &nbsp;|&nbsp; <kbd>[</kbd> <kbd>]</kbd> オフセット
+      </div>
+    </div>
+  </div>
+
+  <script src="chart_princess_viral.js"></script>
+  <script src="chart_luminous.js"></script>
+  <script src="chart_okiraku_superstar.js"></script>
+  <script src="music.js"></script>
+  <script src="../cursor.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../firebase-init.js"></script>
+</body>
+</html>

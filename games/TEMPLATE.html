@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- ★ゲームタイトルを変更 -->
+    <title>TEMPLATE - Milli Games</title>
+    <!-- ★OG設定（本番反映時にURLと画像を修正） -->
+    <meta property="og:title" content="TEMPLATE">
+    <meta property="og:description" content="ここにゲームの説明を書く。">
+    <meta property="og:image" content="https://milli-games.onrender.com/images/ogp.png">
+    <meta property="og:url" content="https://milli-games.onrender.com/games/TEMPLATE.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Milli Games">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="../images/icon/favicon.ico" sizes="any">
+    <link rel="icon" href="../images/icon/192.png" sizes="192x192" type="image/png">
+    <!-- ★ゲームアイコン（images/games/icon/ に置いたもの） -->
+    <link rel="icon" href="../images/games/icon/TEMPLATE-icon.png" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="../images/icon/192.png" sizes="192x192">
+    <link rel="apple-touch-icon" href="../images/icon/518.png" sizes="518x518">
+    <link rel="stylesheet" href="../cursor.css">
+    <style>
+        /* ========== 共通スタイル（Milli Games の見た目に合わせる） ========== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f0ebf5, #e4d6ed, #d8c4e5);
+            color: #2d1b4e;
+            display: flex;
+            flex-direction: column;
+            height: 100dvh;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 0 16px; height: 52px;
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+            flex-shrink: 0;
+        }
+        header a { display: flex; align-items: center; text-decoration: none; }
+        .header-logo { height: 28px; width: auto; display: block; }
+        .game-logo { height: 36px; width: auto; vertical-align: middle; margin-left: 12px; }
+
+        .game-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 8px 12px;
+            gap: 16px;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        /* ★ここからゲーム固有の見た目を追加 */
+        .btn {
+            padding: 10px 24px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #2d1b4e;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:hover { background: rgba(255,255,255,0.35); }
+        .btn:active { transform: scale(0.95); }
+        .btn-primary {
+            background: linear-gradient(135deg, #8582fb, #716ed5);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(133,130,251,0.25);
+        }
+        .hint {
+            font-size: 0.75rem;
+            color: rgba(45,27,78,0.35);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* ローディング画面（既存ゲームと共通） */
+        .loading-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: linear-gradient(135deg, #f0ebf5, #e4d6ed, #d8c4e5);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 24px;
+            transition: opacity 0.4s ease;
+        }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .loading-spinner {
+            width: 48px; height: 48px;
+            border: 4px solid rgba(133,130,251,0.2);
+            border-top-color: #8582fb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text {
+            font-size: 1.1rem; font-weight: 700;
+            color: #2d1b4e; letter-spacing: 0.15em;
+        }
+        .loading-dots span {
+            opacity: 0;
+            animation: dotPulse 1.4s ease-in-out infinite;
+            font-size: 1.4rem;
+        }
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotPulse {
+            0%, 60%, 100% { opacity: 0; }
+            30% { opacity: 1; }
+        }
+
+        @media (max-width: 420px) {
+            header { height: 44px; padding: 0 12px; }
+            .header-logo { height: 24px; }
+            .game-container { padding: 52px 6px 8px; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ローディング画面 -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">NOW LOADING<div class="loading-dots"><span>.</span><span>.</span><span>.</span></div></div>
+    </div>
+
+    <!-- ★ゲームロゴを images/games/rogo/ に置いて参照（なければこの行を削除） -->
+    <header id="top-bar">
+        <a href="../index.html"><img src="../images/rogo.png" alt="Milli Games" class="header-logo"></a>
+        <img src="../images/games/rogo/TEMPLATE-rogo.png" alt="TEMPLATE" class="game-logo">
+    </header>
+
+    <div class="game-container">
+        <!-- ★ここにゲーム本体のUIを作る -->
+        <h1 style="font-size:1.6rem;">TEMPLATE</h1>
+        <p class="hint">ここにゲームを作っていきます。</p>
+        <button class="btn btn-primary" id="demo-btn">デモ用ボタン</button>
+        <div id="demo-log" class="hint" style="min-height:1.4em;"></div>
+    </div>
+
+    <script>
+        (function () {
+            "use strict";
+
+            /* ============================================
+             * 共通設定（ゲームごとに書き換える）
+             * ============================================ */
+            // 履歴に記録するゲーム名（本番サイトの script.js の games 配列の title に合わせる）
+            var GAME_NAME = "TEMPLATE";
+            // Firebase に送るゲームID（小文字・ハイフン形式・サイト内で一意）
+            var GAME_ID = "template";
+
+            /* ============================================
+             * 履歴の保存（本番サイトの「プレイ履歴」に表示される）
+             * 記録できる項目（必要に応じて使う）:
+             *   game      : ゲーム名（必須）
+             *   date      : プレイ日時（自動で入る）
+             *   score     : スコア
+             *   clear     : true=クリア / false=ゲームオーバー
+             *   type      : 種類（例: 診断結果など）
+             *   name      : 結果名（type と一緒に使う）
+             *   matchPct  : 一致度（%）
+             *   accuracy  : 精度（%）
+             *   rank      : ランク
+             * ============================================ */
+            function saveHistory(data) {
+                try {
+                    var h = JSON.parse(localStorage.getItem("milliGames_history") || "[]");
+                    var entry = { game: GAME_NAME, date: new Date().toISOString() };
+                    for (var k in data) entry[k] = data[k];
+                    h.unshift(entry);
+                    if (h.length > 50) h = h.slice(0, 50);
+                    localStorage.setItem("milliGames_history", JSON.stringify(h));
+                } catch (e) {}
+                // アカウント連携していればクラウドにも記録（未設定なら自動でスキップ）
+                recordGameClear(GAME_ID, data.score || 0);
+            }
+
+            /* ============================================
+             * デモ処理（★ここをゲーム本体に置き換える）
+             * ============================================ */
+            var loadingOverlay = document.getElementById("loading-overlay");
+            var demoBtn = document.getElementById("demo-btn");
+            var demoLog = document.getElementById("demo-log");
+
+            var count = 0;
+            demoBtn.addEventListener("click", function () {
+                count++;
+                demoLog.textContent = count + "回クリックしました。";
+                if (count >= 5) {
+                    saveHistory({ score: count * 10, clear: true });
+                    demoLog.textContent = "クリア！履歴に記録しました。";
+                    count = 0;
+                }
+            });
+
+            // ローディングを閉じてゲーム開始
+            window.addEventListener("load", function () {
+                setTimeout(function () {
+                    loadingOverlay.classList.add("hidden");
+                }, 300);
+            });
+        })();
+    </script>
+
+    <!-- ========== Firebase 連携（本番サイトと共通。必ずこの順で読み込む） ========== -->
+    <script src="../cursor.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../firebase-init.js"></script>
+</body>
+</html>

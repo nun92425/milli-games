@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Milli Spectrum - Milli Games</title>
+  <meta property="og:title" content="Milli Spectrum">
+  <meta property="og:description" content="あなたにぴったりのミリプロメンバーは？20の質問から相性タイプを診断するファン向け性格診断ゲーム。">
+  <meta property="og:image" content="https://milli-games.onrender.com/images/ogp.png">
+  <meta property="og:url" content="https://milli-games.onrender.com/games/diagnosis.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Milli Games">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../images/icon/favicon.ico" sizes="any">
+  <link rel="icon" href="../images/icon/192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="../images/games/icon/Milli Spectrum-icon.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="../images/icon/192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="../images/icon/518.png" sizes="518x518">
+  <link rel="apple-touch-icon" href="../images/games/icon/Milli Spectrum-icon.png" sizes="192x192">
+  <link rel="stylesheet" href="diagnosis.css">
+  <link rel="stylesheet" href="../cursor.css">
+</head>
+<body>
+  <div id="bg-blur">
+    <div class="blob" style="width:300px;height:300px;top:-80px;left:-60px;background:var(--primary);animation-delay:0s;"></div>
+    <div class="blob" style="width:250px;height:250px;bottom:-60px;right:-40px;background:#b388ff;animation-delay:-7s;"></div>
+    <div class="blob" style="width:200px;height:200px;bottom:30%;left:10%;background:#e0b0ff;animation-delay:-14s;"></div>
+  </div>
+
+  <div id="top-bar">
+    <a href="../index.html"><img src="../images/rogo.png" alt="Milli Games" class="header-logo"></a>
+    <img src="../images/games/rogo/Milli Spectrum-rogo.png" alt="Milli Spectrum" class="game-logo">
+  </div>
+
+  <div id="container">
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active">
+      <div class="card">
+        <div class="logo-area">
+          <img src="../images/games/rogo/Milli Spectrum-rogo.png" alt="Milli Spectrum" class="game-logo-banner">
+          <div class="subtitle">〜あなたの中にある、ミリプロの色。〜</div>
+        </div>
+        <div class="desc-text">
+          <span>9つのパラメータから、あなたに近い</span>
+          <span>ミリプロタイプを診断します。</span>
+          <span style="margin-top:8px;color:var(--text-muted);font-size:13px;">正直な気持ちで答えてね 🎉</span>
+        </div>
+        <button class="btn-start" onclick="startDiagnosis()">診断を始める</button>
+      </div>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="question-screen" class="screen">
+      <div class="progress-section">
+        <div class="progress-label">
+            <span id="q-progress-text">1 / 10</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="q-progress-fill"></div>
+        </div>
+      </div>
+      <div class="question-card" id="question-card">
+        <span class="q-number" id="q-number">Q1</span>
+        <div class="q-text" id="q-text"></div>
+        <div class="options" id="q-options"></div>
+      </div>
+      <button id="btn-back" class="btn-back" onclick="goBack()">← 戻る</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="screen">
+      <div class="card" id="result-main-card">
+        <div class="result-header" id="result-header"></div>
+        <div class="result-desc" id="result-desc"></div>
+      </div>
+      <div class="card">
+        <div class="radar-wrapper">
+          <canvas id="radar-chart" width="640" height="640"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sub-result" id="sub-result"></div>
+      </div>
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px;text-align:center;">あなたのパラメーター</div>
+        <div class="params-grid" id="params-grid"></div>
+      </div>
+      <div class="card">
+        <div id="share-buttons">
+          <button id="btn-save" class="btn-share">画像を保存</button>
+          <button id="btn-share" class="btn-share">共有</button>
+          <button id="btn-x" class="btn-x">Xでポスト</button>
+        </div>
+      </div>
+      <button class="btn-retry" onclick="retryDiagnosis()">もう一度診断する</button>
+    </div>
+    <canvas id="share-canvas" style="display:none"></canvas>
+
+  </div>
+
+  <script src="diagnosis.js"></script>
+  <script src="../cursor.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../firebase-init.js"></script>
+</body>
+</html>

@@ -1,0 +1,1995 @@
+/* ============================================
+   Milli Games - メインスタイルシート
+   ============================================ */
+
+/* ===== CSS変数 ===== */
+:root {
+  --bg-1: #f0ebf5;
+  --bg-2: #e4d6ed;
+  --bg-3: #d8c4e5;
+  --primary: #8582fb;
+  --primary-dark: #716ed5;
+  --primary-light: #dbbee1;
+  --primary-glow: rgba(133, 130, 251, 0.25);
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-bg-strong: rgba(255, 255, 255, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.50);
+  --glass-border-hover: rgba(255, 255, 255, 0.70);
+  --glass-hover: rgba(255, 255, 255, 0.35);
+  --glass-blur: 20px;
+  --text: #2d1b4e;
+  --text-secondary: rgba(45, 27, 78, 0.70);
+  --text-muted: rgba(45, 27, 78, 0.45);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 999px;
+  --shadow-sm: 0 2px 8px rgba(45, 27, 78, 0.08);
+  --shadow-md: 0 4px 16px rgba(45, 27, 78, 0.12);
+  --shadow-lg: 0 8px 32px rgba(45, 27, 78, 0.16);
+  --shadow-glow: 0 0 24px var(--primary-glow);
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ===== リセット ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font);
+  background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+  color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+img { display: block; max-width: 100%; }
+ul, ol { list-style: none; }
+
+/* ===== 共通クラス ===== */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+
+/* ===== 背景アニメーション ===== */
+#bg-blur {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  animation: blobFloat 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.blob-1 {
+  width: 500px; height: 500px;
+  background: var(--primary);
+  top: -150px; left: -150px;
+}
+
+.blob-2 {
+  width: 420px; height: 420px;
+  background: var(--primary-dark);
+  bottom: -120px; right: -120px;
+  animation-delay: -7s;
+}
+
+.blob-3 {
+  width: 360px; height: 360px;
+  background: var(--primary-light);
+  top: 50%; left: 50%;
+  animation-delay: -14s;
+}
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(60px, -50px) scale(1.15); }
+  50% { transform: translate(-40px, 40px) scale(0.88); }
+  75% { transform: translate(50px, 25px) scale(1.08); }
+}
+
+/* ===== ヘッダー ===== */
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  padding: 0 20px;
+  height: 60px;
+}
+
+#header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+#header-logo {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+#header-logo img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+
+#header-badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border: 1.5px solid var(--primary);
+  border-radius: 4px;
+  color: var(--primary);
+  line-height: 1.4;
+}
+
+#header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text);
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+#menu-btn {
+  background: rgba(255,255,255,0.45);
+  border-color: rgba(255,255,255,0.7);
+}
+
+#menu-btn svg {
+  stroke-width: 2.5;
+}
+
+#profile-btn {
+  width: auto;
+  border-radius: var(--radius-full);
+  padding: 0 12px 0 8px;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+#profile-btn svg {
+  flex-shrink: 0;
+}
+
+#profile-label {
+  white-space: nowrap;
+}
+
+.profile-header-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+
+.profile-header-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.icon-btn:hover {
+  background: var(--glass-hover);
+  border-color: var(--glass-border-hover);
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+/* ===== フィルタータブ ===== */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filter-tab {
+  padding: 8px 24px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.filter-tab:hover {
+  background: var(--glass-hover);
+  color: var(--text);
+}
+
+.filter-tab.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 24px var(--primary-glow);
+}
+
+/* ===== レイアウト ===== */
+#layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ===== カルーセル ===== */
+#carousel-section {
+  position: relative;
+  width: 100%;
+  padding: 12px 0 8px;
+  margin: 0 auto;
+}
+
+#carousel-container {
+  overflow: hidden;
+  width: 100%;
+  padding: 8px 0;
+}
+
+#carousel-track {
+  display: flex;
+  column-gap: 16px;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#carousel-track.dragging {
+  cursor: grabbing;
+  transition: none !important;
+}
+
+/* ===== ゲームカード ===== */
+.game-card {
+  flex: 0 0 85%;
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+  position: relative;
+  transform-origin: center center;
+}
+
+.game-card.active {
+  transform: scale(1.03);
+  box-shadow: var(--shadow-lg), 0 0 40px var(--primary-glow);
+}
+
+.game-card:not(.active) {
+  opacity: 0.55;
+  transform: scale(0.93);
+}
+
+.game-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-lg), 0 8px 40px var(--primary-glow);
+  border-color: var(--glass-border-hover);
+}
+
+/* カード画像 */
+.card-image {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--bg-2), var(--bg-3));
+  flex-shrink: 0;
+}
+
+.card-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.6s ease;
+}
+
+.game-card:hover .card-image img {
+  transform: scale(1.1);
+}
+
+/* ガラス反射 */
+.card-reflection {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.12) 44%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.12) 56%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.game-card:hover .card-reflection {
+  transform: translateX(120%);
+}
+
+/* カードバッジ */
+.card-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  z-index: 3;
+  letter-spacing: 0.04em;
+}
+
+.coming-soon-badge {
+  background: rgba(45, 27, 78, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* カード本文 */
+.card-body {
+  padding: 16px 16px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.card-description {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
+}
+
+.card-description::-webkit-scrollbar { width: 4px; }
+.card-description::-webkit-scrollbar-track { background: transparent; }
+.card-description::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 4px;
+}
+
+/* カードフッター */
+.card-footer {
+  padding: 0 16px 16px;
+  flex-shrink: 0;
+}
+
+.card-stats {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.card-points,
+.card-exp {
+  padding: 3px 12px;
+  border: 1px dashed rgba(45, 27, 78, 0.20);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.card-btn {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  transition: var(--transition);
+  box-shadow: 0 4px 16px var(--primary-glow);
+  letter-spacing: 0.03em;
+}
+
+.card-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px var(--primary-glow);
+}
+
+.card-btn:active {
+  transform: translateY(0);
+}
+
+.card-btn.coming-soon {
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.card-btn.coming-soon:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===== カルーセル矢印 ===== */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text);
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carousel-arrow.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.carousel-arrow:hover {
+  background: var(--glass-hover);
+  border-color: var(--glass-border-hover);
+}
+
+.carousel-arrow:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+#carousel-prev { left: 8px; }
+#carousel-next { right: 8px; }
+
+/* ===== インジケーター ===== */
+#carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0 16px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(45, 27, 78, 0.20);
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0;
+}
+
+.carousel-dot.active {
+  width: 28px;
+  border-radius: 4px;
+  background: var(--primary);
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* ===== サイドパネル ===== */
+#side-panel {
+  display: block;
+}
+
+.panel-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.panel-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--text);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.panel-content {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.news-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.news-item:last-child {
+  border-bottom: none;
+}
+
+.news-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.news-text {
+  color: var(--text-secondary);
+}
+
+#ranking-panel ol {
+  counter-reset: rank;
+}
+
+#ranking-panel li {
+  counter-increment: rank;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.84rem;
+}
+
+#ranking-panel li::before {
+  content: counter(rank);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+#ranking-panel li:first-child::before {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  border-color: #f59e0b;
+  color: #1a0533;
+}
+
+#ranking-panel li:nth-child(2)::before {
+  background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+  border-color: #94a3b8;
+  color: #1a0533;
+}
+
+#ranking-panel li:nth-child(3)::before {
+  background: linear-gradient(135deg, #d4a574, #92400e);
+  border-color: #92400e;
+  color: #fff;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-title {
+  font-weight: 600;
+}
+
+.recent-tag {
+  font-size: 0.72rem;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: #fff;
+}
+
+/* ===== FAB（全てのゲームボタン） ===== */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  padding: 14px 24px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  box-shadow: var(--shadow-lg), 0 0 24px var(--primary-glow);
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.03em;
+}
+
+.fab:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), 0 4px 32px var(--primary-glow);
+}
+
+.fab:active {
+  transform: translateY(0);
+}
+
+/* ===== モーダル共通 ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  max-width: 92vw;
+  max-height: 85vh;
+  width: 680px;
+  overflow-y: auto;
+  padding: 24px;
+  transform: scale(0.92);
+  transition: transform var(--transition);
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-overlay.open .modal {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text);
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  line-height: 1;
+}
+
+.modal-close:hover {
+  background: var(--glass-hover);
+  border-color: var(--glass-border-hover);
+}
+
+/* ===== クレジット ===== */
+.credit-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.credit-item {
+  display: flex;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+.credit-label {
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--primary);
+  min-width: 5em;
+}
+.credit-value {
+  color: var(--text);
+}
+.credit-value a {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+.credit-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.credit-note.disclaimer {
+  border-top: 1px solid var(--glass-border);
+  padding-top: 10px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* ===== プレイ履歴 ===== */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--glass-border);
+}
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.profile-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.profile-comment {
+  font-size: 0.8rem;
+  color: var(--text);
+  margin-top: 2px;
+}
+.profile-status {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+.history-date {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  min-width: 120px;
+}
+.history-game {
+  font-weight: 600;
+  color: var(--primary);
+  min-width: 80px;
+}
+.history-type {
+  flex: 1;
+  color: var(--text);
+  min-width: 140px;
+}
+.history-match {
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-align: right;
+}
+.history-score {
+  color: var(--primary);
+  font-weight: 600;
+  text-align: right;
+}
+.history-rank {
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  background: var(--primary-glow);
+  color: var(--primary-dark);
+}
+
+/* ===== 履歴タブ ===== */
+.hist-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hist-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  padding-bottom: 4px;
+}
+.hist-tab {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+.hist-tab.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.hist-pane {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+.hist-pane.active {
+  display: flex;
+}
+
+/* ===== ゲームテーブル ===== */
+.game-table {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ===== メニューポップアップボタン ===== */
+.menu-popup-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 8px;
+}
+
+.menu-popup-btn:hover {
+  background: var(--glass-hover);
+  border-color: var(--glass-border-hover);
+  padding-left: 20px;
+}
+
+.menu-popup-btn:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== メニュー内インストールボタン ===== */
+.menu-install-section {
+  display: none;
+}
+
+@media (pointer: fine) and (min-width: 1024px) {
+  .menu-install-section {
+    display: block;
+    margin-bottom: 0;
+  }
+}
+
+/* ===== メニュークレジットボタン ===== */
+.menu-credit-section {
+  border-top: 1px solid var(--glass-border);
+  padding-top: 12px;
+}
+
+.menu-credit-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  border-radius: var(--radius-sm);
+}
+
+.menu-credit-btn:hover {
+  color: var(--text);
+  background: var(--glass-hover);
+  padding-left: 20px;
+}
+
+.menu-install-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.menu-install-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ===== ポップアップ本文スタイル ===== */
+#popup-body .news-item {
+  padding: 10px 0;
+}
+
+#popup-body .news-item:last-child {
+  border-bottom: none;
+}
+
+#popup-body .recent-item {
+  padding: 10px 0;
+}
+
+#popup-body .recent-item:last-child {
+  border-bottom: none;
+}
+
+#popup-body ol {
+  counter-reset: rank;
+  padding: 0;
+}
+
+#popup-body li {
+  counter-increment: rank;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+#popup-body li:last-child {
+  border-bottom: none;
+}
+
+#popup-body li::before {
+  content: counter(rank);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+#popup-body li:first-child::before {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  border-color: #f59e0b;
+  color: #1a0533;
+}
+
+#popup-body li:nth-child(2)::before {
+  background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+  border-color: #94a3b8;
+  color: #1a0533;
+}
+
+#popup-body li:nth-child(3)::before {
+  background: linear-gradient(135deg, #d4a574, #92400e);
+  border-color: #92400e;
+  color: #fff;
+}
+
+#popup-body .panel-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--text);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* ===== メニューオーバーレイ ===== */
+#menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+#menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===== サイドメニュー ===== */
+#side-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 85vw;
+  z-index: 300;
+  transform: translateX(100%);
+  transition: transform var(--transition-slow);
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+#side-menu.open {
+  transform: translateX(0);
+}
+
+#side-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+
+#side-menu-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.version-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--primary);
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 4px rgba(133,130,251,0.3);
+}
+
+#side-menu-body {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
+}
+
+#side-menu-body::-webkit-scrollbar { width: 4px; }
+#side-menu-body::-webkit-scrollbar-track { background: transparent; }
+#side-menu-body::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 4px;
+}
+
+.menu-section {
+  margin-bottom: 28px;
+}
+
+.menu-section h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.menu-section li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.menu-section li:hover {
+  color: var(--text);
+  padding-left: 6px;
+}
+
+.menu-site-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.menu-site-link:hover {
+  background: var(--glass-hover);
+  border-color: var(--glass-border-hover);
+}
+
+.menu-site-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: #fff;
+}
+
+.menu-site-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.menu-site-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.menu-site-desc {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setting-item label {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#volume-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--glass-border);
+  outline: none;
+}
+
+#volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--glass-border-hover);
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--primary-glow);
+  transition: var(--transition);
+}
+
+#volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+#volume-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--glass-border-hover);
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+#volume-label {
+  font-size: 0.84rem;
+  color: var(--text);
+  min-width: 42px;
+  text-align: right;
+  font-weight: 600;
+}
+
+/* ===== アカウント連携（Firebase Auth・§2-4） ===== */
+.mp-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.84rem;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.mp-input::placeholder {
+  color: var(--text-muted);
+}
+
+.mp-field-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mp-field-row .mp-input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.mp-pass-toggle {
+  flex: 0 0 auto;
+  width: 42px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-pass-toggle:active {
+  transform: scale(0.95);
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.mp-tab {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.mp-tab.active {
+  background: linear-gradient(135deg, var(--primary), #b388ff);
+  color: #fff;
+  border-color: transparent;
+}
+
+.mp-tab:active {
+  transform: scale(0.97);
+}
+
+.mp-switch {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.mp-forgot {
+  display: block;
+  width: 100%;
+  padding: 4px 0 8px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.mp-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mp-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary), #b388ff);
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.mp-btn:active {
+  transform: scale(0.97);
+}
+
+.mp-btn-outline {
+  background: var(--glass-bg);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  font-weight: 500;
+}
+
+.mp-msg {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  min-height: 1.2em;
+  margin: 0;
+}
+
+.mp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.mp-row b {
+  color: var(--primary);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.mp-id-input {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--glass-border);
+}
+
+.mp-id-input .mp-row {
+  align-items: stretch;
+}
+
+.mp-id-input .mp-row .mp-btn-save {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+}
+
+.mp-id-input .mp-input {
+  margin-bottom: 0;
+}
+
+.mp-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.mp-menu-status {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  min-height: 1.1em;
+}
+
+.mp-menu-status.linked {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ===== 未ログインポップアップ ===== */
+.login-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.login-popup.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.login-popup-card {
+  width: 92vw;
+  max-width: 400px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.92);
+  transition: transform var(--transition);
+}
+
+.login-popup.open .login-popup-card {
+  transform: scale(1);
+}
+
+.login-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.login-popup-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.login-popup-close {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  color: var(--text);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.login-popup-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+
+.login-popup-skip {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+/* ===== 連携案内バナー（ログイン任意・§2-4） ===== */
+.mp-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #2a1f4d;
+  color: #fff;
+  padding: 10px 14px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mp-banner-text {
+  line-height: 1.5;
+}
+
+.mp-banner-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mp-banner-btn {
+  background: #ffd7f5;
+  color: #2a1f4d;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mp-banner-btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 480px) {
+  .mp-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mp-banner-actions {
+    justify-content: flex-end;
+  }
+}
+
+/* ===== ホーム/全ゲーム画面 ===== */
+#home-view {
+  padding-top: 80px;
+}
+
+#all-games-view {
+  padding-top: 80px;
+  padding-bottom: 100px;
+}
+
+/* 全ゲーム一覧のカードグリッド */
+#all-games-view .game-table {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+#all-games-view .game-card {
+  flex: none;
+  width: 100%;
+}
+
+#all-games-view .game-card:not(.active) {
+  opacity: 1;
+  transform: none;
+}
+
+#all-games-view .game-card:hover {
+  transform: translateY(-4px) scale(1.01);
+}
+
+@media (min-width: 600px) {
+  #all-games-view .game-table {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  #all-games-view .game-table {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== モバイル（サイドパネル非表示） ===== */
+@media (max-width: 1023px) {
+  #side-panel {
+    display: none;
+  }
+}
+
+/* ===== タブレット ===== */
+@media (min-width: 768px) {
+  .game-card {
+    flex: 0 0 70%;
+  }
+
+  .filter-tab {
+    padding: 10px 32px;
+    font-size: 0.95rem;
+  }
+
+  #carousel-section {
+    padding: 20px 0;
+  }
+
+  .carousel-arrow {
+    width: 48px;
+    height: 48px;
+    font-size: 1.8rem;
+  }
+
+  #carousel-prev { left: 16px; }
+  #carousel-next { right: 16px; }
+
+  .game-card.active {
+    transform: scale(1.04);
+  }
+}
+
+/* ===== PC ===== */
+@media (min-width: 1024px) {
+  #layout {
+    display: flex;
+    gap: 28px;
+    padding: 0 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  #main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #side-panel {
+    width: 300px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 80px;
+    margin-top: 80px;
+    align-self: start;
+    display: block !important;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--glass-border) transparent;
+  }
+
+  #side-panel::-webkit-scrollbar { width: 4px; }
+  #side-panel::-webkit-scrollbar-track { background: transparent; }
+  #side-panel::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 4px;
+  }
+
+  .menu-info-section { display: none; }
+
+  #side-panel .panel-section {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  #side-panel .panel-section:last-child {
+    margin-bottom: 0;
+  }
+
+  #side-panel .panel-title {
+    border-bottom: none;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    font-size: 0.8rem;
+  }
+
+  #side-panel .panel-content {
+    font-size: 0.78rem;
+  }
+
+  .game-card {
+    flex: 0 0 50%;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .game-card.active { transform: scale(1.05); }
+
+  .carousel-arrow { opacity: 1; pointer-events: auto; }
+  .carousel-arrow.visible { opacity: 1; }
+  #carousel-prev { left: -8px; }
+  #carousel-next { right: -8px; }
+  #carousel-container { padding: 16px 0; }
+  .card-title { font-size: 1.25rem; }
+  .card-description { font-size: 0.88rem; }
+}
+
+/* ===== 大画面 ===== */
+@media (min-width: 1280px) {
+  .game-card {
+    flex: 0 0 42%;
+  }
+}
+
+/* ===== UA通知オーバーレイ ===== */
+.ua-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.3s;
+}
+
+.ua-overlay.ua-hidden {
+  display: none;
+  opacity: 0;
+}
+
+.ua-card {
+  max-width: 360px;
+  width: 88%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 16px 48px rgba(45, 27, 78, 0.2);
+  overflow: hidden;
+  animation: uaFadeIn 0.35s ease;
+}
+
+@keyframes uaFadeIn {
+  0% { opacity: 0; transform: translateY(20px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ua-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 0;
+}
+
+.ua-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #8582fb;
+  letter-spacing: 0.02em;
+}
+
+.ua-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(45, 27, 78, 0.06);
+  color: rgba(45, 27, 78, 0.3);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.ua-close:hover {
+  background: rgba(45, 27, 78, 0.1);
+  color: rgba(45, 27, 78, 0.6);
+}
+
+.ua-body {
+  padding: 12px 20px 20px;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: rgba(45, 27, 78, 0.7);
+}
+
+.ua-body strong {
+  color: #2d1b4e;
+}
+
+.ua-body .ua-step {
+  display: block;
+  padding-left: 4px;
+  margin-bottom: 4px;
+}
+
+.ua-body .ua-step:last-child {
+  margin-bottom: 0;
+}
+
+.ua-blocking .ua-close {
+  display: none;
+}
+
+.ua-blocking .ua-card {
+  border-color: rgba(133, 130, 251, 0.3);
+}
+
+.ua-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.ua-btn {
+  flex: 1;
+  padding: 10px 0;
+  border: 1.5px solid rgba(45, 27, 78, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  color: rgba(45, 27, 78, 0.55);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ua-btn:hover {
+  border-color: #8582fb;
+  color: #8582fb;
+  background: rgba(133, 130, 251, 0.06);
+}
+
+.ua-btn:active {
+  transform: scale(0.97);
+}
+
+.ua-btn-primary {
+  border-color: #8582fb;
+  background: #8582fb;
+  color: #fff;
+}
+
+.ua-btn-primary:hover {
+  background: #716ed5;
+  border-color: #716ed5;
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  .ua-card {
+    width: 92%;
+  }
+}

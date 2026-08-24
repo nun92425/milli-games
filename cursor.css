@@ -1,0 +1,237 @@
+/* ============================================
+   Milli Games - カスタムカーソル
+   移植元: milli-unishare-preview /video.css:2084-2185
+   32px .cur / .png 対応。5タレント完全版のみ有効。
+   ============================================ */
+
+/* ── ベース: OFF以外は全要素にカスタムカーソル ── */
+html.cursor-custom * { cursor: url('images/cursors/default.png') 8 8, auto !important; }
+
+/* 完成5種: .cur (hotspot内蔵) + .png フォールバック */
+html.cursor-custom.cursor-mahoro * { cursor: url('images/cursors/mahoro.cur'), url('images/cursors/mahoro.png') 1 1, auto !important; }
+html.cursor-custom.cursor-rako * { cursor: url('images/cursors/rako.cur'), url('images/cursors/rako.png') 1 6, auto !important; }
+html.cursor-custom.cursor-yura * { cursor: url('images/cursors/yura.cur'), url('images/cursors/yura.png') 2 6, auto !important; }
+html.cursor-custom.cursor-rei * { cursor: url('images/cursors/rei.cur'), url('images/cursors/rei.png') 1 3, auto !important; }
+html.cursor-custom.cursor-nuhu * { cursor: url('images/cursors/nuhu.cur'), url('images/cursors/nuhu.png') 2 6, auto !important; }
+
+/* 未完成6種は今は無効（将来追加時は下記を有効化） */
+/*
+html.cursor-custom.cursor-konomi * { cursor: url('images/cursors/konomi.png') 8 8, auto !important; }
+html.cursor-custom.cursor-nono * { cursor: url('images/cursors/nono.png') 8 8, auto !important; }
+html.cursor-custom.cursor-akubi * { cursor: url('images/cursors/akubi.png') 8 8, auto !important; }
+html.cursor-custom.cursor-koma * { cursor: url('images/cursors/koma.png') 8 8, auto !important; }
+html.cursor-custom.cursor-rizu * { cursor: url('images/cursors/rizu.png') 8 8, auto !important; }
+html.cursor-custom.cursor-tsukuri * { cursor: url('images/cursors/tsukuri.png') 8 8, auto !important; }
+*/
+
+/* ── タレント別差分（Hand / Beam / Wait）: 完成5種のみ ── */
+/* Hand: リンク・ボタン・カード上で手のカーソル */
+html.cursor-custom.cursor-mahoro a:hover,
+html.cursor-custom.cursor-mahoro button:hover,
+html.cursor-custom.cursor-mahoro .game-card:hover,
+html.cursor-custom.cursor-mahoro .card-btn:hover,
+html.cursor-custom.cursor-mahoro .fab:hover,
+html.cursor-custom.cursor-mahoro .carousel-dot:hover,
+html.cursor-custom.cursor-mahoro .menu-popup-btn:hover,
+html.cursor-custom.cursor-mahoro .filter-tab:hover { cursor: url('images/cursors/mahoro/hand.cur'), pointer !important; }
+
+html.cursor-custom.cursor-mahoro input:hover,
+html.cursor-custom.cursor-mahoro textarea:hover,
+html.cursor-custom.cursor-mahoro select:hover,
+html.cursor-custom.cursor-mahoro [contenteditable]:hover { cursor: url('images/cursors/mahoro/beam.cur'), text !important; }
+
+html.cursor-custom.cursor-mahoro .loading-overlay,
+html.cursor-custom.cursor-mahoro .loading,
+html.cursor-custom.cursor-mahoro .overlay,
+html.cursor-custom.cursor-mahoro .loading-spinner { cursor: url('images/cursors/mahoro/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-rei a:hover,
+html.cursor-custom.cursor-rei button:hover,
+html.cursor-custom.cursor-rei .game-card:hover,
+html.cursor-custom.cursor-rei .card-btn:hover,
+html.cursor-custom.cursor-rei .fab:hover,
+html.cursor-custom.cursor-rei .carousel-dot:hover,
+html.cursor-custom.cursor-rei .menu-popup-btn:hover,
+html.cursor-custom.cursor-rei .filter-tab:hover { cursor: url('images/cursors/rei/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-rei input:hover,
+html.cursor-custom.cursor-rei textarea:hover,
+html.cursor-custom.cursor-rei select:hover { cursor: url('images/cursors/rei/beam.cur'), text !important; }
+html.cursor-custom.cursor-rei .loading-overlay,
+html.cursor-custom.cursor-rei .loading,
+html.cursor-custom.cursor-rei .overlay { cursor: url('images/cursors/rei/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-nuhu a:hover,
+html.cursor-custom.cursor-nuhu button:hover,
+html.cursor-custom.cursor-nuhu .game-card:hover,
+html.cursor-custom.cursor-nuhu .card-btn:hover,
+html.cursor-custom.cursor-nuhu .fab:hover,
+html.cursor-custom.cursor-nuhu .carousel-dot:hover,
+html.cursor-custom.cursor-nuhu .menu-popup-btn:hover,
+html.cursor-custom.cursor-nuhu .filter-tab:hover { cursor: url('images/cursors/nuhu/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-nuhu input:hover,
+html.cursor-custom.cursor-nuhu textarea:hover,
+html.cursor-custom.cursor-nuhu select:hover { cursor: url('images/cursors/nuhu/beam.cur'), text !important; }
+html.cursor-custom.cursor-nuhu .loading-overlay,
+html.cursor-custom.cursor-nuhu .loading,
+html.cursor-custom.cursor-nuhu .overlay { cursor: url('images/cursors/nuhu/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-rako a:hover,
+html.cursor-custom.cursor-rako button:hover,
+html.cursor-custom.cursor-rako .game-card:hover,
+html.cursor-custom.cursor-rako .card-btn:hover,
+html.cursor-custom.cursor-rako .fab:hover,
+html.cursor-custom.cursor-rako .carousel-dot:hover,
+html.cursor-custom.cursor-rako .menu-popup-btn:hover,
+html.cursor-custom.cursor-rako .filter-tab:hover { cursor: url('images/cursors/rako/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-rako input:hover,
+html.cursor-custom.cursor-rako textarea:hover,
+html.cursor-custom.cursor-rako select:hover { cursor: url('images/cursors/rako/beam.cur'), text !important; }
+html.cursor-custom.cursor-rako .loading-overlay,
+html.cursor-custom.cursor-rako .loading,
+html.cursor-custom.cursor-rako .overlay { cursor: url('images/cursors/rako/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-yura a:hover,
+html.cursor-custom.cursor-yura button:hover,
+html.cursor-custom.cursor-yura .game-card:hover,
+html.cursor-custom.cursor-yura .card-btn:hover,
+html.cursor-custom.cursor-yura .fab:hover,
+html.cursor-custom.cursor-yura .carousel-dot:hover,
+html.cursor-custom.cursor-yura .menu-popup-btn:hover,
+html.cursor-custom.cursor-yura .filter-tab:hover { cursor: url('images/cursors/yura/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-yura input:hover,
+html.cursor-custom.cursor-yura textarea:hover,
+html.cursor-custom.cursor-yura select:hover { cursor: url('images/cursors/yura/beam.cur'), text !important; }
+html.cursor-custom.cursor-yura .loading-overlay,
+html.cursor-custom.cursor-yura .loading,
+html.cursor-custom.cursor-yura .overlay { cursor: url('images/cursors/yura/wait.cur'), wait !important; }
+
+/* カルーセルドラッグ中は grabbing を優先 */
+html.cursor-custom #carousel-track.dragging,
+html.cursor-custom #carousel-track.dragging * { cursor: grabbing !important; }
+
+/* モーション配慮: 動きを減らす設定では無効化 */
+@media (prefers-reduced-motion: reduce) {
+  html.cursor-custom * { cursor: auto !important; }
+}
+
+/* ── ヘッダー カーソル選択ドロップダウン（PC/タブレット） ── */
+.cursor-top-wrap { position: relative; display: none; }
+@media (min-width: 768px) {
+  .cursor-top-wrap { display: block; }
+}
+.cursor-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 12px;
+  font-weight: 700;
+  color: #2d1b4e;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.cursor-top-btn:hover { border-color: var(--primary, #8582fb); box-shadow: 0 2px 8px rgba(133,130,251,0.2); background: rgba(255,255,255,0.65); }
+.cursor-top-btn[aria-expanded="true"] { border-color: var(--primary, #8582fb); background: #f8f2ff; }
+.cursor-top-preview {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #8582fb;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  display: inline-block;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+}
+.cursor-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 230px;
+  max-height: 360px;
+  overflow-y: auto;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(45,27,78,0.14);
+  z-index: 400;
+  padding: 6px;
+  display: none;
+}
+.cursor-dropdown.open { display: block; }
+.cursor-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.cursor-dropdown-item:hover { background: rgba(133,130,251,0.08); }
+.cursor-dropdown-item.active { background: rgba(133,130,251,0.15); }
+.cursor-dropdown-item img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+  flex-shrink: 0;
+  background: #fff;
+}
+.cursor-dropdown-item.active img { border-color: var(--primary, #8582fb); }
+.cursor-dropdown-item span { font-size: 12px; font-weight: 600; color: #2d1b4e; flex: 1; }
+.cursor-dropdown-item .check { width: 16px; height: 16px; color: var(--primary, #8582fb); opacity: 0; flex: 0 0 16px; }
+.cursor-dropdown-item.active .check { opacity: 1; }
+
+/* ハンバーガー内フォールバック */
+.menu-cursor-section { border-top: 1px solid var(--glass-border); padding-top: 12px; }
+.menu-cursor-section .menu-cursor-note { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; }
+.menu-cursor-grid { display: flex; flex-direction: column; gap: 6px; }
+.menu-cursor-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  background: var(--glass-bg);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+}
+.menu-cursor-item:hover { background: var(--glass-hover); border-color: var(--glass-border-hover); }
+.menu-cursor-item.active { background: rgba(133,130,251,0.12); border-color: var(--primary, #8582fb); }
+.menu-cursor-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #eee; flex-shrink: 0; background: #fff; }
+.menu-cursor-item.active img { border-color: var(--primary, #8582fb); }
+.menu-cursor-item span { font-size: 0.84rem; font-weight: 600; color: var(--text); flex: 1; }
+.menu-cursor-item .check { width: 16px; height: 16px; color: var(--primary, #8582fb); opacity: 0; flex: 0 0 16px; }
+.menu-cursor-item.active .check { opacity: 1; }
+
+/* ゲームヘッダー用（games/*.html #top-bar）でも同じドロップダウンを使えるように */
+#top-bar .cursor-top-wrap { display: none; }
+@media (min-width: 768px) {
+  #top-bar .cursor-top-wrap { display: block; }
+}
+#top-bar .cursor-top-btn {
+  border: 1px solid rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.5);
+  color: #2d1b4e;
+  font-size: 11px;
+  padding: 5px 9px;
+}
+#top-bar .cursor-dropdown { right: 0; }
