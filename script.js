@@ -271,9 +271,14 @@ const state = {
 
 // ============================================
 // 表示するゲームを取得（フィルター）
+// devOnly:true のゲームは devブランチでのみ表示。mainでは自動的に除外される
+// 将来 main に公開する際は該当エントリの devOnly を削除する
+// mainブランチではWIPは物理的に存在しないが、保険としてフィルタ
 // ============================================
 function getFilteredGames() {
-  return games;
+  var isDevBranch = false; // mainブランチ用: 常にfalse。devブランチでは true に書き換えられる
+  if (isDevBranch) return games;
+  return games.filter(function(g){ return !g.devOnly; });
 }
 
 // ============================================
