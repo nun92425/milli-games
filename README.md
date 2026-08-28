@@ -1,7 +1,25 @@
-# Milli Games plus（開発用テスト環境）
+# Milli Games（本番兼開発）
 
-[Milli Games](https://milli-games.onrender.com/index.html) に新しくゲームを追加するための開発用リポジトリです。
-本番サイトと同じフォルダ構成を再現しているので、このリポジトリ内で開発・動作確認して、**できあがったファイルを本番サイトにコピーするだけで追加できます**。
+[Milli Games](https://milli-games.onrender.com/index.html) 本番兼開発リポジトリです。旧本番 `tsukikage-R8/milligame` の履歴を統合し、このリポジトリで本番開発を行います。
+
+## ブランチ運用（WIP非公開）
+
+- `main` — 本番デプロイ用（Renderが監視）。公開済みの4ゲームのみ。WIPは物理的に存在しません。
+  - `script.js:275` の `getFilteredGames()` は保険として `devOnly:true` を除外。
+  - 直接URL (`games/milikara.html` 等) でもWIPに到達不可。
+- `dev` — 開発統合用。WIP3件（ミリカラ/Milli Fortune/みりこれ！）を含む7ゲーム。Codespacesは `dev` で起動。
+  - `dev` → `main` へのPRで1ゲームずつ公開（`devOnly:true` を外す）。
+- `feature/<game>` — 各ゲームの作業ブランチ → `dev` にPR。
+
+```
+main  ──●──●──●── (Renderがデプロイ。4ゲーム)
+          ╲
+dev        ●──●── (7ゲーム, WIP含む)
+            ╲
+feature/*    ●── (各ゲーム開発)
+```
+
+旧 `Milli-Games-plus` は開発用テスト環境でしたが、2026-08-28に本番統合しました。
 
 ## フォルダ構成
 
@@ -56,26 +74,31 @@ python3 -m http.server 8000
 | `accuracy` | 精度(%) | `92` |
 | `rank` | ランク | `SS` |
 
-## 本番サイトへの反映手順
+## 新ゲーム公開手順（dev → main）
 
-1. **ゲーム本体**: `games/<ゲーム名>.html` を本番の `games/` フォルダにアップロード
-2. **ゲーム画像**: `images/games/icon/` と `images/games/rogo/` にアイコン・ロゴをアップロード
-3. **ゲーム登録**: 本番の `script.js` の `games` 配列にエントリを追加（`TEMPLATE` を参考に）
+1. `feature/<game>` で開発 → `dev` にPR（この時点ではまだ非公開、本番影響なし）
+2. 公開準備完了後、`dev` → `main` にPRを作成。このPRで以下を実施:
+   - `games/<ゲーム名>.html` を `main` に含める
+   - `images/games/icon/` , `images/games/rogo/` の実アイコンを `main` に含める
+   - `script.js` の該当エントリから `devOnly:true` を削除
+3. レビュー後マージ → Renderが `main` を自動デプロイ
 
 ```js
+// devブランチでのWIP登録例（devOnly:true でmainでは非表示）
 {
-  id: 9,                      // ★既存のidと重複しない一意な数字
+  id: 9,
   title: "ゲーム名",
   description: "ゲームの説明",
   image: "images/games/icon/ゲーム名-icon.png",
-  points: 100,                // 獲得ポイント（SITE_TYPE=demoの間は表示されない）
+  points: 100,
   exp: "x1.2",
-  tags: ["おすすめ", "新着"], // フィルター用タグ
-  link: "games/ゲーム名.html"
+  tags: ["おすすめ", "新着"],
+  link: "games/ゲーム名.html",
+  devOnly: true  // ← 公開時にこの行を削除
 }
 ```
 
-4. **Firebase設定**: 本番の `firebase-config.js`（実キー入り）は、このリポジトリのプレースホルダで**上書きしない**こと。本番のものをそのまま使い続ける
+4. **Firebase設定**: `firebase-config.js` は `millipro-shared`（`sunmachia/Millipro-Chronicle` と同一）を使用。`firebase-config.example.js` がプレースホルダ。
 
 ## 注意事項
 
