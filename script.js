@@ -178,6 +178,39 @@ window.addEventListener("beforeinstallprompt", function (e) {
 })();
 const games = [
   {
+    id: 11,
+    title: "ミリカラ",
+    description: "ミリプロ楽曲で歌おう！\n\nマイクで音程を判定するWebカラオケ。カウィバウィボなど公式インストで採点＆シェアしよう。\nオフセット調整やガイド表示で誰でも楽しめる！",
+    image: "images/games/icon/milikara-icon.png",
+    points: 150,
+    exp: "x1.3",
+    tags: ["おすすめ", "新着"],
+    link: "games/milikara.html",
+    devOnly: true
+  },
+  {
+    id: 10,
+    title: "Milli Fortune",
+    description: "見下ろし2Dのカジノフロアを自由に歩き回ろう！\n\nダブルアップ・ルーレット・スロット・赤青の4ゲームが遊べる大型カジノゲーム。\nチップを賭けて、連勝と配当で所持チップを増やそう。\n\n毎日ログインボーナスもあるぞ！",
+    image: "images/games/icon/Milli Fortune-icon.png",
+    points: 150,
+    exp: "x1.3",
+    tags: ["おすすめ", "新着"],
+    link: "games/milli-fortune.html",
+    devOnly: true
+  },
+  {
+    id: 9,
+    title: "みりこれ！",
+    description: "お題と同じカードを見つけ出せ！\n\nたくさん並んだカードの中から、「お題」とまったく同じイラストをタップ。\n進むほどカードが増えて、違いも見つけにくくなる…！\n\nあなたはどこまで見抜ける？",
+    image: "images/games/icon/Miri Kore-icon.png",
+    points: 100,
+    exp: "x1.2",
+    tags: ["おすすめ", "新着"],
+    link: "games/miri-kore.html",
+    devOnly: true
+  },
+  {
     id: 8,
     title: "Milli Pulse",
     description: "ミリプロの音楽を、リズムに乗せて楽しもう。\n\nお気に入りの楽曲をプレイして、最高スコアを目指そう。\n刻んだリズムと積み重ねたスコアが、あなたの「推し活」の記録になる。\n\n音楽を聴く。\nリズムを刻む。\n推しへの想いを、Pulseに。",
@@ -271,9 +304,17 @@ const state = {
 
 // ============================================
 // 表示するゲームを取得（フィルター）
+// devOnly:true のゲームは devブランチでのみ表示。mainでは自動的に除外される
+// 将来 main に公開する際は該当エントリの devOnly を削除する
+// devブランチでは全件表示、mainブランチでは保険としてdevOnlyを除外
 // ============================================
 function getFilteredGames() {
-  return games;
+  // devブランチでは常にWIPを含めて表示
+  // mainブランチでは devOnly:false のみを返す (WIPは物理的に存在しないが保険)
+  // 判定: 現在のブランチがdevかどうかはコード自体で分かるので、devでは全件、mainではフィルタ
+  var isDevBranch = true; // devブランチ用: 常にtrue。mainブランチでは false に書き換えられる
+  if (isDevBranch) return games;
+  return games.filter(function(g){ return !g.devOnly; });
 }
 
 // ============================================
