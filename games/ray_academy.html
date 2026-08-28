@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ray Academy - Sniper Training Program</title>
+<style>
+  :root {
+    --white: #ffffff;
+    --ice-blue: #a2d7dd;
+    --pastel-purple: #c3b2e7;
+    --silver: #c0c0c0;
+    --glass-bg: rgba(255, 255, 255, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --hologram-glow: 0 0 10px var(--ice-blue), 0 0 20px var(--ice-blue);
+  }
+  
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #f0f8ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none; /* スマホでのスクロールやズームを完全に防止 */
+  }
+
+  #game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 500px;
+    margin: 0 auto;
+    background: radial-gradient(circle, var(--white) 0%, var(--ice-blue) 100%);
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  }
+
+  /* --- Glass UI Classes --- */
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    color: #333;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  /* --- Screens --- */
+  .screen {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: none;
+  }
+  .active { display: block; }
+
+  /* --- Title Screen --- */
+  #title-screen { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; }
+  h1 { color: #333; text-shadow: var(--hologram-glow); margin: 0; font-size: 2.5rem; }
+  .subtitle { color: #555; font-size: 1rem; margin-bottom: 30px; letter-spacing: 2px; }
+  .btn {
+    padding: 15px 30px; font-size: 1.2rem; background: var(--white);
+    border: 2px solid var(--ice-blue); border-radius: 30px; cursor: pointer;
+    box-shadow: var(--hologram-glow); color: #333; font-weight: bold; transition: 0.2s;
+  }
+  .btn:active { transform: scale(0.95); }
+
+  /* --- Intro Sequence --- */
+  #intro-screen { background: #000; z-index: 100; }
+  #intro-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 0; height: 0; background: var(--ice-blue); border-radius: 50%; opacity: 0; box-shadow: var(--hologram-glow); }
+  #intro-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 0; height: 0; border: 2px solid var(--ice-blue); border-radius: 50%; opacity: 0; }
+  #intro-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(var(--ice-blue) 1px, transparent 1px), linear-gradient(90deg, var(--ice-blue) 1px, transparent 1px); background-size: 40px 40px; opacity: 0; }
+  #intro-panel { position: absolute; top: 20px; left: -200px; padding: 10px; color: var(--ice-blue); font-family: monospace; white-space: nowrap; }
+  #intro-rei { position: absolute; bottom: 0; right: 0; opacity: 0; height: 60%; width: 150px; background: var(--pastel-purple); border-left: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;}
+  #intro-mission { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); color: var(--white); font-size: 2rem; text-shadow: var(--hologram-glow); opacity: 0; font-weight: bold; letter-spacing: 5px; white-space: nowrap; }
+  #intro-bubble { position: absolute; bottom: 40%; right: 40%; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 10px; opacity: 0; color: #333; font-weight: bold;}
+  #intro-scope { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(2); opacity: 0; border: 2px solid var(--ice-blue); border-radius: 50%; width: 200px; height: 200px; box-sizing: border-box; }
+
+  /* --- Game Screen --- */
+  #game-screen { z-index: 20; }
+  #hud-top { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; padding: 10px; font-weight: bold; box-sizing: border-box; }
+  #play-area { position: absolute; top: 80px; bottom: 150px; left: 10px; right: 10px; border: 1px solid var(--ice-blue); border-radius: 20px; overflow: hidden; background: rgba(255,255,255,0.3); touch-action: none; cursor: crosshair; }
+  
+  .target {
+    position: absolute; width: 60px; height: 60px;
+    display: flex; justify-content: center; align-items: center; font-size: 40px;
+    transition: transform 0.1s; cursor: pointer; user-select: none;
+    -webkit-user-drag: none;
+  }
+  
+  #hud-bottom { position: absolute; bottom: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: flex-end; }
+  #rei-character { width: 120px; height: 130px; background: linear-gradient(var(--pastel-purple), var(--ice-blue)); border-radius: 10px 10px 0 0; border: 2px solid var(--white); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; text-align: center;}
+  #rei-bubble { position: absolute; bottom: 140px; right: 10px; padding: 10px; min-width: 150px; max-width: 200px; z-index: 10; font-weight: bold;}
+  #rei-bubble::after { content: ''; position: absolute; bottom: -10px; right: 20px; border-width: 10px 10px 0; border-style: solid; border-color: var(--glass-border) transparent; }
+
+  /* --- Result Screen --- */
+  #result-screen { text-align: center; padding: 40px 20px; background: radial-gradient(circle, var(--white) 0%, var(--ice-blue) 100%); z-index: 200; box-sizing: border-box;}
+  #result-screen.active { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+  #result-rank { font-size: 5rem; font-weight: bold; color: var(--pastel-purple); text-shadow: var(--hologram-glow); margin: 10px 0;}
+  .s-rank-bg { background: linear-gradient(135deg, var(--white), var(--pastel-purple), var(--ice-blue)) !important; }
+
+</style>
+</head>
+<body>
+
+<div id="game-container">
+  
+  <div id="title-screen" class="screen active">
+    <h1>Ray Academy</h1>
+    <div class="subtitle">Sniper Training Program</div>
+    <div style="margin-bottom: 20px;">
+        <label style="font-weight: bold;">難易度: 
+            <select id="diff-select" class="glass-panel" style="padding: 8px; font-size: 1rem;">
+                <option value="easy">Easy (基礎訓練)</option>
+                <option value="normal">Normal (実戦訓練)</option>
+                <option value="hard">Hard (教官試験)</option>
+            </select>
+        </label>
+    </div>
+    <button class="btn" onpointerdown="startIntroSequence()">Start Training</button>
+  </div>
+
+  <div id="intro-screen" class="screen">
+    <div id="intro-grid"></div>
+    <div id="intro-ring"></div>
+    <div id="intro-dot"></div>
+    <div id="intro-panel" class="glass-panel">RAY ACADEMY<br>TACTICAL TRAINING SYSTEM</div>
+    <div id="intro-rei">夕霧レイ</div>
+    <div id="intro-mission">MISSION START</div>
+    <div id="intro-bubble">作戦開始。</div>
+    <div id="intro-scope"></div>
+  </div>
+
+  <div id="game-screen" class="screen">
+    <div id="hud-top" class="glass-panel">
+      <div>SCORE: <span id="ui-score">0</span></div>
+      <div>TIME: <span id="ui-time">30.0</span></div>
+      <div>COMBO: <span id="ui-combo">0</span></div>
+    </div>
+    
+    <div id="play-area" onpointerdown="missShot(event)">
+      </div>
+
+    <div id="hud-bottom">
+      <div class="glass-panel" style="padding: 10px; height: 50px; display: flex; flex-direction: column; justify-content: center;">
+        <div>AMMO: ∞</div>
+        <div id="ui-diff-disp" style="font-size: 0.8rem; color: var(--pastel-purple);">EASY</div>
+      </div>
+      <div>
+        <div id="rei-bubble" class="glass-panel">準備はいい？</div>
+        <div id="rei-character">夕霧レイ<br>(立ち絵)</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="result-screen" class="screen">
+    <h2>MISSION COMPLETE</h2>
+    <div id="result-rank">S</div>
+    <div class="glass-panel" style="display:inline-block; padding: 20px; text-align: left; margin-bottom: 20px;">
+        スコア: <span id="res-score">0</span><br>
+        命中率: <span id="res-acc">0</span>%<br>
+        最大コンボ: <span id="res-combo">0</span>
+    </div>
+    <div id="result-rei-msg" style="font-weight: bold; margin-bottom: 20px; padding: 0 20px; white-space: pre-wrap;"></div>
+    <button class="btn" onpointerdown="backToTitle()">Back to Academy</button>
+  </div>
+
+</div>
+
+<script>
+/* --- Game State & Variables --- */
+let state = {
+    score: 0, combo: 0, maxCombo: 0, shots: 0, hits: 0, time: 30, diff: 'easy',
+    timerId: null, spawnerId: null
+};
+
+const targetIcons = ['💠', '⭐', '❄️', '🐱', '✨'];
+
+const reiQuotes = {
+    start: ["作戦開始。", "準備はいい？", "新人くん、今日も訓練いこうか", "私が見てるから"],
+    hit: ["ナイス。", "いい射撃。", "その調子。", "照準、安定してる。"],
+    combo: ["精度上がってる。", "いい感じ、そのまま。", "集中できてるね。"],
+    miss: ["大丈夫。", "焦らない。", "次の一発で取り返そう。"],
+    last10: ["ラストスパート。", "最後まで集中。"],
+    clearEasy: ["初任務成功。", "いいスタートだね。", "合格。次もこの調子でいこう。"],
+    clearNormal: ["なかなかいい腕になってきたね。", "その精度、好きだよ。", "私の訓練についてこれてる。"],
+    clearHard: ["任務完了。", "ここまで来るとは思ってなかった。", "もう新人とは言えないかもね。"],
+    clearS: ["ここまで来たなら、もう私の相棒でしょ？", "次の作戦も任せられる。", "合格。私が認めた狙撃手だよ。"]
+};
+
+function getRandomQuote(type) {
+    const quotes = reiQuotes[type];
+    return quotes[Math.floor(Math.random() * quotes.length)];
+}
+
+function updateReiSpeech(text) {
+    document.getElementById('rei-bubble').innerText = text;
+}
+
+/* --- Core Sequence --- */
+function startIntroSequence() {
+    state.diff = document.getElementById('diff-select').value;
+    document.getElementById('ui-diff-disp').innerText = state.diff.toUpperCase();
+    
+    document.getElementById('title-screen').classList.remove('active');
+    const intro = document.getElementById('intro-screen');
+    document.querySelectorAll('#intro-screen div').forEach(el => el.style = '');
+    intro.classList.add('active');
+
+    // 0.3s
+    setTimeout(() => {
+        const dot = document.getElementById('intro-dot');
+        dot.style.opacity = '1';
+        dot.style.width = '10px'; dot.style.height = '10px';
+    }, 300);
+
+    // 0.5s
+    setTimeout(() => {
+        const ring = document.getElementById('intro-ring');
+        ring.style.opacity = '1';
+        ring.style.transition = 'all 0.5s ease-out';
+        ring.style.width = '300px'; ring.style.height = '300px';
+    }, 500);
+
+    // 0.8s
+    setTimeout(() => { document.getElementById('intro-grid').style.opacity = '0.3'; }, 800);
+
+    // 1.0s
+    setTimeout(() => {
+        const panel = document.getElementById('intro-panel');
+        panel.style.transition = 'left 0.3s ease-out';
+        panel.style.left = '20px';
+    }, 1000);
+
+    // 1.3s
+    setTimeout(() => {
+        const rei = document.getElementById('intro-rei');
+        rei.style.transition = 'opacity 0.3s';
+        rei.style.opacity = '0.8';
+    }, 1300);
+
+    // 1.6s
+    setTimeout(() => {
+        const mission = document.getElementById('intro-mission');
+        mission.style.transition = 'opacity 0.2s';
+        mission.style.opacity = '1';
+    }, 1600);
+
+    // 1.9s
+    setTimeout(() => {
+        const bubble = document.getElementById('intro-bubble');
+        bubble.style.transition = 'opacity 0.2s';
+        bubble.style.opacity = '1';
+    }, 1900);
+
+    // 2.3s
+    setTimeout(() => {
+        const scope = document.getElementById('intro-scope');
+        scope.style.transition = 'all 0.2s ease-in';
+        scope.style.opacity = '1';
+        scope.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 2300);
+
+    // 2.5s
+    setTimeout(() => {
+        intro.classList.remove('active');
+        startGame();
+    }, 2500);
+}
+
+/* --- Game Loop --- */
+function startGame() {
+    const gameScreen = document.getElementById('game-screen');
+    gameScreen.classList.add('active');
+    
+    // 状態リセット
+    state = { ...state, score: 0, combo: 0, maxCombo: 0, shots: 0, hits: 0, time: (state.diff === 'hard' ? 30 : (state.diff === 'normal' ? 45 : 60)) };
+    updateHUD();
+    document.getElementById('ui-time').innerText = state.time.toFixed(1);
+    document.getElementById('play-area').innerHTML = '';
+    updateReiSpeech(getRandomQuote('start'));
+
+    let startTime = Date.now();
+    let totalTime = state.time * 1000;
+    
+    state.timerId = setInterval(() => {
+        let elapsed = Date.now() - startTime;
+        let remaining = totalTime - elapsed;
+        
+        if (remaining <= 10000 && remaining > 9900 && state.time > 10) {
+            updateReiSpeech(getRandomQuote('last10'));
+        }
+
+        if (remaining <= 0) {
+            document.getElementById('ui-time').innerText = "0.0";
+            endGame();
+        } else {
+            document.getElementById('ui-time').innerText = (remaining / 1000).toFixed(1);
+        }
+    }, 100);
+
+    let spawnRate = state.diff === 'hard' ? 500 : (state.diff === 'normal' ? 800 : 1200);
+    state.spawnerId = setInterval(spawnTarget, spawnRate);
+}
+
+function spawnTarget() {
+    const area = document.getElementById('play-area');
+    
+    // エリアが非表示等のバグ回避策：サイズが取れない場合はデフォルト値を使用
+    const areaWidth = area.clientWidth || 300;
+    const areaHeight = area.clientHeight || 400;
+    
+    const target = document.createElement('div');
+    target.className = 'target';
+    target.innerText = targetIcons[Math.floor(Math.random() * targetIcons.length)];
+    
+    // 確実にはみ出さないようサイズ(60px)を引いて計算
+    const maxX = Math.max(0, areaWidth - 60);
+    const maxY = Math.max(0, areaHeight - 60);
+    
+    target.style.left = Math.floor(Math.random() * maxX) + 'px';
+    target.style.top = Math.floor(Math.random() * maxY) + 'px';
+
+    // 動くターゲットの処理
+    if (state.diff !== 'easy') {
+        const speed = state.diff === 'hard' ? 1.5 : 3;
+        target.style.transition = `all ${speed}s linear`;
+        
+        // 少し遅れて次の座標へ移動（フェイント/移動）
+        setTimeout(() => {
+            if(target.parentElement) {
+                target.style.left = Math.floor(Math.random() * maxX) + 'px';
+                target.style.top = Math.floor(Math.random() * maxY) + 'px';
+            }
+        }, 50);
+    }
+
+    // タップ・クリック判定（onpointerdownを使用）
+    target.onpointerdown = (e) => {
+        e.preventDefault(); // デフォルト動作(スクロール等)をブロック
+        e.stopPropagation(); // 背景のmissShot発火をブロック
+        hitTarget(target);
+    };
+
+    area.appendChild(target);
+
+    // 寿命設定
+    let lifeTime = state.diff === 'hard' ? 1200 : (state.diff === 'normal' ? 2000 : 3000);
+    setTimeout(() => {
+        if (target.parentElement) {
+            target.remove();
+        }
+    }, lifeTime);
+}
+
+function hitTarget(target) {
+    if(!target.parentElement) return; // 二重クリック防止
+    target.remove();
+    
+    state.shots++;
+    state.hits++;
+    state.combo++;
+    if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+    
+    let points = 100;
+    if (Math.random() > 0.8) points = 150; // クリティカル
+    
+    if (state.combo >= 20) points += 300;
+    else if (state.combo >= 10) points += 100;
+    else if (state.combo >= 5) points += 50;
+
+    state.score += points;
+    updateHUD();
+
+    if (state.combo % 5 === 0) updateReiSpeech(getRandomQuote('combo'));
+    else updateReiSpeech(getRandomQuote('hit'));
+}
+
+function missShot(e) {
+    e.preventDefault();
+    state.shots++;
+    state.combo = 0;
+    updateHUD();
+    updateReiSpeech(getRandomQuote('miss'));
+}
+
+function updateHUD() {
+    document.getElementById('ui-score').innerText = state.score;
+    document.getElementById('ui-combo').innerText = state.combo;
+}
+
+/* --- Result --- */
+function endGame() {
+    clearInterval(state.timerId);
+    clearInterval(state.spawnerId);
+    document.getElementById('game-screen').classList.remove('active');
+    
+    let accuracy = state.shots === 0 ? 0 : Math.round((state.hits / state.shots) * 100);
+    let rank = 'D';
+    if (accuracy >= 95) rank = 'S';
+    else if (accuracy >= 85) rank = 'A';
+    else if (accuracy >= 70) rank = 'B';
+    else if (accuracy >= 50) rank = 'C';
+
+    const resScreen = document.getElementById('result-screen');
+    resScreen.classList.add('active');
+    
+    document.getElementById('res-score').innerText = state.score;
+    document.getElementById('res-acc').innerText = accuracy;
+    document.getElementById('res-combo').innerText = state.maxCombo;
+    
+    const rankEl = document.getElementById('result-rank');
+    rankEl.innerText = rank;
+
+    let msg = "";
+    if (rank === 'S') {
+        msg = getRandomQuote('clearS');
+        resScreen.classList.add('s-rank-bg');
+        rankEl.style.color = 'white';
+    } else {
+        resScreen.classList.remove('s-rank-bg');
+        rankEl.style.color = 'var(--pastel-purple)';
+        if (state.diff === 'hard') msg = getRandomQuote('clearHard');
+        else if (state.diff === 'normal') msg = getRandomQuote('clearNormal');
+        else msg = getRandomQuote('clearEasy');
+    }
+    
+    if (state.diff === 'hard' && rank === 'S') {
+        msg = "【S Rank Certified】\n" + msg;
+    }
+    document.getElementById('result-rei-msg').innerText = msg;
+    recordGameClear('ray-academy', state.score);
+}
+
+function backToTitle() {
+    document.getElementById('result-screen').classList.remove('active');
+    document.getElementById('title-screen').classList.add('active');
+}
+</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../firebase-init.js"></script>
+</body>
+</html>

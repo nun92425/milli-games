@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Milli Connect - Milli Games</title>
+  <link rel="icon" href="../images/icon/favicon.ico" sizes="any">
+  <link rel="icon" href="../images/icon/192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="../images/icon/192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="../images/icon/518.png" sizes="518x518">
+  <style>
+    :root {
+      --primary: #8582fb;
+      --primary-dark: #716ed5;
+      --primary-light: #dbbee1;
+      --primary-glow: rgba(133, 130, 251, 0.25);
+      --glass-bg: rgba(255, 255, 255, 0.25);
+      --glass-bg-strong: rgba(255, 255, 255, 0.35);
+      --glass-border: rgba(255, 255, 255, 0.50);
+      --text: #2d1b4e;
+      --text-secondary: rgba(45, 27, 78, 0.70);
+      --text-muted: rgba(45, 27, 78, 0.45);
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 999px;
+      --shadow-md: 0 4px 16px rgba(45, 27, 78, 0.12);
+      --shadow-lg: 0 8px 32px rgba(45, 27, 78, 0.16);
+      --shadow-glow: 0 0 24px var(--primary-glow);
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font);
+      background: linear-gradient(135deg, #f0ebf5, #e4d6ed, #d8c4e5);
+      color: var(--text);
+      min-height: 100vh; min-height: 100dvh;
+      overflow: hidden;
+      line-height: 1.6;
+    }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    a { color: inherit; text-decoration: none; }
+
+    #top-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 16px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      height: 40px; flex-shrink: 0;
+    }
+    #top-bar a { font-size: 0; display: flex; align-items: center; }
+    .header-logo { height: 22px; vertical-align: middle; }
+    .game-logo-text { font-size: 1rem; font-weight: 800; color: var(--primary); letter-spacing: 0.03em; }
+    .top-right { margin-left: auto; font-size: 0.78rem; color: var(--text-muted); }
+    #hs-display { color: var(--primary); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    #game-wrapper {
+      display: flex; flex-direction: column;
+      height: calc(100vh - 40px); height: calc(100dvh - 40px);
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute; inset: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 20;
+      animation: fadeIn 0.25s ease;
+    }
+    .overlay.active { display: flex; }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+    .overlay-inner {
+      text-align: center;
+      padding: 32px 28px;
+      max-width: 380px;
+      width: 90%;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-lg);
+    }
+    .overlay-inner h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .overlay-inner h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 12px; }
+    .desc-text { color: var(--text-secondary); font-size: 0.83rem; line-height: 1.8; margin-bottom: 16px; }
+    .controls-info {
+      display: flex; flex-direction: column; gap: 4px;
+      font-size: 0.78rem; color: var(--text-muted);
+      margin-bottom: 20px;
+      padding: 10px; background: rgba(255,255,255,0.15);
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-start {
+      width: 100%; padding: 14px; font-size: 1.1rem; font-weight: 700;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary), #b388ff);
+      color: #fff;
+      box-shadow: var(--shadow-glow);
+      transition: transform 0.15s;
+    }
+    .btn-start:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      padding: 10px 28px; font-size: 0.95rem; font-weight: 700;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      box-shadow: var(--shadow-glow);
+      transition: transform 0.15s;
+    }
+    .btn-secondary:active { transform: scale(0.95); }
+
+    #game-area {
+      flex: 1; display: flex; flex-direction: column;
+      padding: 6px 8px; gap: 6px; position: relative;
+      max-width: 380px; width: 100%; margin: 0 auto;
+    }
+
+    #hud-row {
+      display: flex; gap: 8px; justify-content: center;
+      padding: 6px 12px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+    }
+    .hud-item { text-align: center; flex: 1; }
+    .hud-label { font-size: 0.6rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+    .hud-value { font-size: 0.85rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+    .hud-value.highlight { color: var(--primary); }
+
+    .gauges { display: flex; gap: 6px; }
+    .gauge-wrap {
+      flex: 1; height: 12px; background: rgba(45,27,78,0.08);
+      border-radius: 999px; position: relative; overflow: hidden;
+    }
+    .gauge-bar { height: 100%; border-radius: 999px; transition: width 0.1s linear; }
+    #fever-bar { background: linear-gradient(90deg, var(--primary-light), #ff8c00); width: 0%; }
+    #combo-bar { background: linear-gradient(90deg, var(--primary), #b388ff); width: 0%; }
+    .gauge-text {
+      position: absolute; top: 0; left: 6px; right: 6px;
+      font-size: 8px; line-height: 12px; font-weight: 700;
+      color: var(--text); text-shadow: 0 0 4px rgba(255,255,255,0.5);
+      display: flex; justify-content: space-between;
+    }
+
+    #canvas-container {
+      flex: 1; position: relative; min-height: 200px;
+      background: radial-gradient(circle, #1a0a2e 0%, #0d0e21 100%);
+      border-radius: var(--radius-md);
+      border: 2px solid rgba(45,27,78,0.15);
+      overflow: hidden;
+      max-width: 320px; width: 100%; margin: 0 auto;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    #canvas-container.fever-mode {
+      background: radial-gradient(circle, #3a1538 0%, #1d0a1a 100%);
+      border-color: var(--primary-light);
+      box-shadow: inset 0 0 30px rgba(219,190,225,0.25);
+    }
+    canvas { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
+
+    #fx-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; overflow: hidden; }
+    .comment {
+      position: absolute; white-space: nowrap; font-weight: bold;
+      color: rgba(255,255,255,0.7); font-size: 14px;
+      animation: scrollL 3s linear forwards;
+      text-shadow: 1px 1px 2px #000;
+    }
+    @keyframes scrollL { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
+
+    #cutin {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+      font-size: 24px; font-weight: 900; color: #fff;
+      text-shadow: 0 0 10px var(--primary), 2px 2px 0px #000;
+      opacity: 0; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center; white-space: nowrap;
+    }
+
+    #skills-row {
+      display: flex; gap: 8px; justify-content: center;
+      padding: 2px 0;
+      max-width: 320px; margin: 0 auto; width: 100%;
+    }
+    .skill-btn {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 2px solid rgba(45,27,78,0.12);
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .skill-btn:active { transform: scale(0.9); }
+    .skill-btn.ready {
+      border-color: var(--primary);
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+    .skill-fill {
+      position: absolute; bottom: 0; left: 0; width: 100%;
+      background: var(--primary);
+      opacity: 0.2;
+      transition: height 0.2s; z-index: 0;
+    }
+    .skill-icon { z-index: 1; font-size: 16px; line-height: 1; }
+    .skill-label { z-index: 1; font-size: 7px; font-weight: 700; color: var(--text-secondary); }
+    .skill-notice { z-index: 1; font-size: 7px; font-weight: 600; color: var(--primary); }
+
+    #result-screen .overlay-inner { max-width: 340px; }
+    .res-title { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+    #res-rank { font-size: 42px; font-weight: 900; margin: 0; }
+    #res-heat { font-size: 22px; color: #fbbf24; margin-bottom: 12px; letter-spacing: 2px; }
+    .stats-table {
+      width: 100%; text-align: left; font-size: 0.83rem;
+      margin-bottom: 18px; color: var(--text-secondary);
+      border-top: 1px solid rgba(45,27,78,0.10); padding-top: 10px;
+    }
+    .stats-table td { padding: 3px 0; }
+    .stats-table .val { text-align: right; font-weight: 700; color: var(--text); }
+
+    @keyframes shake-small {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+    @keyframes shake-large {
+      10%, 90% { transform: translate3d(-3px, -3px, 0); }
+      20%, 80% { transform: translate3d(5px, 5px, 0); }
+      30%, 50%, 70% { transform: translate3d(-8px, 4px, 0); }
+      40%, 60% { transform: translate3d(8px, -4px, 0); }
+    }
+    .shake-small { animation: shake-small 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+    .shake-large { animation: shake-large 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+    #controls-hint {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      padding: 2px 0 4px;
+    }
+  </style>
+</head>
+<body>
+  <div id="top-bar">
+    <a href="../index.html"><img src="../images/rogo.png" alt="Milli Games" class="header-logo"></a>
+    <span class="game-logo-text">Milli Connect</span>
+    <span class="top-right">HIGH <span id="hs-display">0</span></span>
+  </div>
+
+  <div id="game-wrapper">
+    <div id="game-area">
+      <div id="hud-row">
+        <div class="hud-item">
+          <div class="hud-label">TIME</div>
+          <div class="hud-value" id="ui-time">60</div>
+        </div>
+        <div class="hud-item">
+          <div class="hud-label">SCORE</div>
+          <div class="hud-value highlight" id="ui-score">0</div>
+        </div>
+      </div>
+
+      <div class="gauges">
+        <div class="gauge-wrap">
+          <div class="gauge-text"><span>FEVER</span><span id="fever-pct">0</span></div>
+          <div class="gauge-bar" id="fever-bar"></div>
+        </div>
+        <div class="gauge-wrap">
+          <div class="gauge-text"><span>COMBO</span><span id="ui-combo">0</span></div>
+          <div class="gauge-bar" id="combo-bar"></div>
+        </div>
+      </div>
+
+      <div id="canvas-container">
+        <div id="fx-layer"><div id="cutin"></div></div>
+        <canvas id="game-canvas"></canvas>
+      </div>
+
+      <div id="skills-row">
+        <div class="skill-btn" id="skill-btn-0" onclick="activateSkill(0)">
+          <div class="skill-fill" id="skill-fill-0"></div>
+          <div class="skill-icon">&#x1F4A5;</div>
+          <div class="skill-label">BOMB</div>
+          <div class="skill-notice" id="skill-notice-0"></div>
+        </div>
+        <div class="skill-btn" id="skill-btn-1" onclick="activateSkill(1)">
+          <div class="skill-fill" id="skill-fill-1"></div>
+          <div class="skill-icon">&#x23F1;</div>
+          <div class="skill-label">TIME</div>
+          <div class="skill-notice" id="skill-notice-1"></div>
+        </div>
+        <div class="skill-btn" id="skill-btn-2" onclick="activateSkill(2)">
+          <div class="skill-fill" id="skill-fill-2"></div>
+          <div class="skill-icon">&#x26A1;</div>
+          <div class="skill-label">BOOST</div>
+          <div class="skill-notice" id="skill-notice-2"></div>
+        </div>
+        <div class="skill-btn" id="shuffle-btn" onclick="doShuffle(true)">
+          <div class="skill-icon">&#x1F504;</div>
+          <div class="skill-label">SHUFFLE</div>
+          <div class="skill-notice" id="shuffle-count">3</div>
+        </div>
+      </div>
+
+      <div id="controls-hint">同色のツムを繋いで消せ！ 詰まったらシャッフル</div>
+
+      <!-- Title Screen -->
+      <div class="overlay active" id="title-screen">
+        <div class="overlay-inner">
+          <div style="width:64px;height:64px;margin:0 auto 12px;background:linear-gradient(135deg,var(--primary),#b388ff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:var(--shadow-glow);">&#x1F3AE;</div>
+          <h1>Milli Connect</h1>
+          <div class="subtitle">- Live Stream Puzzle -</div>
+          <div class="desc-text">
+            <span>同色のツムを繋いで消す</span>
+            <span>ライブ配信パズルゲーム！</span>
+          </div>
+          <div class="controls-info">
+            <span>マウス/タッチ： ドラッグでツムを繋ぐ</span>
+            <span>スキルゲージが溜まったらタップで発動</span>
+            <span>&#x1F504; シャッフル： 盤面を並び替え (3回)</span>
+          </div>
+          <button class="btn-start" onclick="changeState('PLAYING')">START</button>
+        </div>
+      </div>
+
+      <!-- Result Screen -->
+      <div class="overlay" id="result-screen">
+        <div class="overlay-inner">
+          <div class="res-title">STREAM END</div>
+          <div id="res-rank">C</div>
+          <div id="res-heat">&#x2605;&#x2605;&#x2605;&#x2606;&#x2606;</div>
+          <table class="stats-table">
+            <tr><td>SCORE</td><td class="val" id="res-score">0</td></tr>
+            <tr><td>MAX COMBO</td><td class="val" id="res-combo">0</td></tr>
+            <tr><td>TOTAL CLEARED</td><td class="val" id="res-cleared">0</td></tr>
+            <tr><td>COLLAB BONUS</td><td class="val" id="res-collab">0</td></tr>
+          </table>
+          <button class="btn-start" onclick="changeState('TITLE')">FINISH</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    function playTone(freq, type, duration, vol) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(vol || 0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (duration || 0.1));
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + (duration || 0.1));
+    }
+    const FX = {
+      connect: (n) => playTone(300 + n * 50, 'sine', 0.1, 0.1),
+      pop: () => playTone(800, 'square', 0.1, 0.05),
+      bomb: () => playTone(100, 'sawtooth', 0.3, 0.2),
+      spacha: () => { playTone(1200, 'sine', 0.1, 0.1); setTimeout(() => playTone(1600, 'sine', 0.3, 0.1), 100); },
+      fever: () => { playTone(400, 'square', 0.2, 0.1); setTimeout(() => playTone(600, 'square', 0.4, 0.1), 200); }
+    };
+
+    const GAME_TIME = 60;
+    const COLS = 6;
+    const ROWS = 10;
+    const SKILL_MAX = 15;
+    const CHARS = [
+      { id: 0, name: '\u2764', color: '#ff2a6d', textColor: '#fff' },
+      { id: 1, name: '\u2666', color: '#05d9e8', textColor: '#000' },
+      { id: 2, name: '\u2660', color: '#00ff87', textColor: '#000' },
+      { id: 3, name: '\u2605', color: '#f1c40f', textColor: '#000' },
+      { id: 4, name: '\u25C6', color: '#9b59b6', textColor: '#fff' }
+    ];
+    const ITEM_BOMB = { id: 98, name: '\u2605', color: '#ffffff', textColor: '#000' };
+    const ITEM_MIC = { id: 99, name: '\uD83C\uDFA4', color: '#ff007f', textColor: '#fff' };
+    const ITEM_SPACHA = { id: 100, name: '\u5186', color: '#ff0000', textColor: '#fff' };
+
+    let canvas, ctx, canvasW, canvasH;
+    let state = 'TITLE';
+    let reqId = null;
+    let timerInterval = null;
+
+    let grid = [];
+    let selectedCells = [];
+    let isDragging = false;
+    let floatingTexts = [];
+    let score = 0;
+    let timeLeft = 0;
+    let highScore = localStorage.getItem('milli_connect_hs') || 0;
+    let combo = 0; let maxCombo = 0; let comboTimer = 0;
+    let feverGauge = 0; let isFever = false; let feverTimeLeft = 0;
+    let skillGauges = [0, 0, 0]; let boostTimeLeft = 0;
+    let statsCleared = 0; let statsCollab = 0;
+    let lastChainId = -1; let lastChainLength = 0;
+    let shufflesLeft = 3;
+
+    let cellSize, tsumRadius, gridOffsetX, gridOffsetY;
+
+    window.onload = () => {
+      document.getElementById('hs-display').innerText = Number(highScore).toLocaleString();
+      const container = document.getElementById('canvas-container');
+      canvas = document.getElementById('game-canvas');
+      resizeCanvas();
+      ctx = canvas.getContext('2d');
+      canvas.addEventListener('mousedown', pointerDown);
+      canvas.addEventListener('mousemove', pointerMove);
+      window.addEventListener('mouseup', pointerUp);
+      canvas.addEventListener('touchstart', pointerDown, { passive: false });
+      canvas.addEventListener('touchmove', pointerMove, { passive: false });
+      window.addEventListener('touchend', pointerUp);
+      window.addEventListener('resize', resizeCanvas);
+      gameLoop();
+    };
+
+    function resizeCanvas() {
+      const container = document.getElementById('canvas-container');
+      canvasW = container.clientWidth;
+      canvasH = container.clientHeight;
+      canvas.width = canvasW;
+      canvas.height = canvasH;
+      recalcLayout();
+    }
+
+    function recalcLayout() {
+      cellSize = Math.min(canvasW / COLS, canvasH / ROWS);
+      tsumRadius = cellSize * 0.42;
+      gridOffsetX = (canvasW - COLS * cellSize) / 2;
+      gridOffsetY = (canvasH - ROWS * cellSize) / 2;
+    }
+
+    function changeState(newState) {
+      if (newState === 'PLAYING') initAudio();
+      document.getElementById('title-screen').classList.remove('active');
+      document.getElementById('result-screen').classList.remove('active');
+      state = newState;
+      if (state === 'TITLE') {
+        highScore = localStorage.getItem('milli_connect_hs') || 0;
+        document.getElementById('hs-display').innerText = Number(highScore).toLocaleString();
+        document.getElementById('title-screen').classList.add('active');
+      } else if (state === 'PLAYING') {
+        initGame();
+      } else if (state === 'RESULT') {
+        showResult();
+        document.getElementById('result-screen').classList.add('active');
+      }
+    }
+
+    function triggerShake(isLarge) {
+      const el = document.getElementById('canvas-container');
+      el.classList.remove('shake-small', 'shake-large');
+      void el.offsetWidth;
+      el.classList.add(isLarge ? 'shake-large' : 'shake-small');
+      setTimeout(() => el.classList.remove('shake-small', 'shake-large'), isLarge ? 500 : 300);
+    }
+
+    function addFloatingText(x, y, text, color) {
+      floatingTexts.push({ x, y, text, color: color || '#8582fb', life: 40 });
+    }
+
+    function randomChar() {
+      return CHARS[Math.floor(Math.random() * CHARS.length)];
+    }
+
+    function createGrid() {
+      grid = [];
+      for (let r = 0; r < ROWS; r++) {
+        grid[r] = [];
+        for (let c = 0; c < COLS; c++) {
+          grid[r][c] = null;
+        }
+      }
+    }
+
+    function fillGrid() {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (!grid[r][c]) {
+            grid[r][c] = { data: randomChar() };
+          }
+        }
+      }
+      if (!hasValidMoves()) {
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            grid[r][c] = { data: randomChar() };
+          }
+        }
+        if (!hasValidMoves()) fillGrid();
+      }
+    }
+
+    function isAdjacent(r1, c1, r2, c2) {
+      return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
+    }
+
+    function floodFill(r, c, charId, visited) {
+      if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return [];
+      if (visited[r][c]) return [];
+      if (!grid[r][c] || grid[r][c].data.id >= 90) return [];
+      if (grid[r][c].data.id !== charId) return [];
+      visited[r][c] = true;
+      let result = [{ r, c }];
+      result.push(...floodFill(r - 1, c, charId, visited));
+      result.push(...floodFill(r + 1, c, charId, visited));
+      result.push(...floodFill(r, c - 1, charId, visited));
+      result.push(...floodFill(r, c + 1, charId, visited));
+      return result;
+    }
+
+    function hasValidMoves() {
+      const visited = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (grid[r][c] && grid[r][c].data.id < 90 && !visited[r][c]) {
+            const group = floodFill(r, c, grid[r][c].data.id, visited);
+            if (group.length >= 3) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function applyGravity() {
+      for (let c = 0; c < COLS; c++) {
+        let writeRow = ROWS - 1;
+        for (let r = ROWS - 1; r >= 0; r--) {
+          if (grid[r][c]) {
+            if (r !== writeRow) {
+              grid[writeRow][c] = grid[r][c];
+              grid[r][c] = null;
+            }
+            writeRow--;
+          }
+        }
+      }
+    }
+
+    function fillEmptyCells() {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (!grid[r][c]) {
+            grid[r][c] = { data: randomChar() };
+          }
+        }
+      }
+    }
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (cx - rect.left) * (canvas.width / rect.width),
+        y: (cy - rect.top) * (canvas.height / rect.height)
+      };
+    }
+
+    function getCellFromPos(pos) {
+      const col = Math.floor((pos.x - gridOffsetX) / cellSize);
+      const row = Math.floor((pos.y - gridOffsetY) / cellSize);
+      if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
+        return { r: row, c: col };
+      }
+      return null;
+    }
+
+    function getCellCenter(row, col) {
+      return {
+        x: gridOffsetX + col * cellSize + cellSize / 2,
+        y: gridOffsetY + row * cellSize + cellSize / 2
+      };
+    }
+
+    function pointerDown(e) {
+      if (state !== 'PLAYING') return; e.preventDefault();
+      const pos = getPos(e);
+      const cell = getCellFromPos(pos);
+      if (!cell || !grid[cell.r][cell.c]) return;
+      const tsum = grid[cell.r][cell.c];
+      if (tsum.data.id === 100) return;
+      if (tsum.data.id === 98 || tsum.data.id === 99) { activateItem(cell); return; }
+      isDragging = true;
+      selectedCells = [{ row: cell.r, col: cell.c }];
+      FX.connect(1);
+    }
+
+    function pointerMove(e) {
+      if (!isDragging || state !== 'PLAYING' || selectedCells.length === 0) return; e.preventDefault();
+      const pos = getPos(e);
+      const cell = getCellFromPos(pos);
+      if (!cell || !grid[cell.r][cell.c]) return;
+      const tsum = grid[cell.r][cell.c];
+      if (tsum.data.id >= 90) return;
+      const last = selectedCells[selectedCells.length - 1];
+      if (selectedCells.length >= 2) {
+        const prev = selectedCells[selectedCells.length - 2];
+        if (prev.row === cell.r && prev.col === cell.c) {
+          selectedCells.pop();
+          return;
+        }
+      }
+      if (last.row === cell.r && last.col === cell.c) return;
+      if (isAdjacent(cell.r, cell.c, last.row, last.col) && tsum.data.id === grid[last.row][last.col].data.id) {
+        if (!selectedCells.some(s => s.row === cell.r && s.col === cell.c)) {
+          selectedCells.push({ row: cell.r, col: cell.c });
+          FX.connect(selectedCells.length);
+        }
+      }
+    }
+
+    function pointerUp() {
+      if (!isDragging) return; isDragging = false;
+      const minLen = isFever ? 2 : 3;
+      if (selectedCells.length >= minLen) processChain(selectedCells);
+      selectedCells = [];
+    }
+
+    function processChain(chainCells) {
+      const count = chainCells.length;
+      const firstTsum = grid[chainCells[0].row][chainCells[0].col];
+      if (!firstTsum) return;
+      const charId = firstTsum.data.id;
+      statsCleared += count;
+      FX.pop();
+      let spawnMic = false;
+      if (count >= 7 && lastChainLength >= 7 && lastChainId !== charId && lastChainId !== -1) {
+        statsCollab++; score += 5000; showCutin("COLLAB BONUS!"); spawnMic = true;
+        FX.fever(); triggerShake(false);
+      }
+      lastChainId = charId; lastChainLength = count;
+      combo++; if (combo > maxCombo) maxCombo = combo; comboTimer = 100;
+      let base = count * 100 + Math.max(0, count - 3) * 150;
+      if (count >= 7) base += 500;
+      let mult = 1 + (combo * 0.05);
+      if (isFever) mult *= 1.5;
+      if (boostTimeLeft > 0) mult *= 2.0;
+      const addedScore = Math.floor(base * mult);
+      score += addedScore;
+      const lastPos = getCellCenter(chainCells[chainCells.length - 1].row, chainCells[chainCells.length - 1].col);
+      addFloatingText(lastPos.x, lastPos.y - 20, '+' + addedScore);
+      if (!isFever) {
+        feverGauge = Math.min(100, feverGauge + count * 3);
+        if (feverGauge >= 100) startFever();
+      }
+      if (charId >= 0 && charId <= 2) skillGauges[charId] = Math.min(SKILL_MAX, skillGauges[charId] + count);
+      let spawnBomb = count >= 7 && Math.random() > 0.3;
+      removeGridCells(chainCells);
+      applyGravity();
+      if (spawnMic) placeItemOnBoard(ITEM_MIC);
+      if (spawnBomb) placeItemOnBoard(ITEM_BOMB);
+      fillEmptyCells();
+      if (!hasValidMoves()) doShuffle(false);
+      updateUI();
+    }
+
+    function placeItemOnBoard(item) {
+      const emptyCells = [];
+      for (let r = 0; r < ROWS; r++)
+        for (let c = 0; c < COLS; c++)
+          if (!grid[r][c]) emptyCells.push({ r, c });
+      if (emptyCells.length > 0) {
+        const cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        grid[cell.r][cell.c] = { data: item };
+        return;
+      }
+      const normals = [];
+      for (let r = 0; r < ROWS; r++)
+        for (let c = 0; c < COLS; c++)
+          if (grid[r][c] && grid[r][c].data.id < 90) normals.push({ r, c });
+      if (normals.length > 0) {
+        const cell = normals[Math.floor(Math.random() * normals.length)];
+        grid[cell.r][cell.c] = { data: item };
+      }
+    }
+
+    function removeGridCells(cells) {
+      cells.forEach(({ r, c }) => { grid[r][c] = null; });
+    }
+
+    function activateItem(cell) {
+      const tsum = grid[cell.r][cell.c];
+      if (!tsum) return;
+      const itemId = tsum.data.id;
+      const center = getCellCenter(cell.r, cell.c);
+      grid[cell.r][cell.c] = null;
+      let hits = [];
+      if (itemId === 98) {
+        for (let dr = -2; dr <= 2; dr++) {
+          for (let dc = -2; dc <= 2; dc++) {
+            const nr = cell.r + dr, nc = cell.c + dc;
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] && grid[nr][nc].data.id !== 98 && grid[nr][nc].data.id !== 99) {
+              hits.push({ r: nr, c: nc });
+            }
+          }
+        }
+        FX.bomb(); triggerShake(false); showCutin("BOMB!");
+      } else if (itemId === 99) {
+        for (let nc = 0; nc < COLS; nc++) {
+          if (grid[cell.r][nc] && grid[cell.r][nc].data.id !== 98 && grid[cell.r][nc].data.id !== 99) {
+            hits.push({ r: cell.r, c: nc });
+          }
+        }
+        FX.bomb(); triggerShake(false); showCutin("MIC ON!");
+        if (!isFever) { feverGauge = Math.min(100, feverGauge + 30); if (feverGauge >= 100) startFever(); }
+      }
+      processExplosionHits(hits, center);
+    }
+
+    function processExplosionHits(hits, originPos) {
+      if (hits.length === 0) { applyGravity(); fillEmptyCells(); updateUI(); return; }
+      let addedScore = 0;
+      let hasSpacha = false;
+      hits.forEach(({ r, c }) => {
+        const t = grid[r][c];
+        if (t && t.data.id === 100) { hasSpacha = true; addedScore += 10000; }
+        else { addedScore += Math.floor(150 * (1 + (combo * 0.05))); statsCleared++; }
+        grid[r][c] = null;
+      });
+      score += addedScore;
+      addFloatingText(originPos.x, originPos.y, '+' + addedScore, hasSpacha ? '#ff0000' : '#8582fb');
+      if (hasSpacha) { FX.spacha(); triggerShake(true); showCutin("SUPER CHAT!"); }
+      applyGravity();
+      fillEmptyCells();
+      if (!hasValidMoves()) doShuffle(false);
+      updateUI();
+    }
+
+    function startFever() {
+      isFever = true; feverTimeLeft = 10; feverGauge = 100;
+      document.getElementById('canvas-container').classList.add('fever-mode');
+      FX.fever(); triggerShake(false); showCutin("STREAM FEVER!");
+      for (let i = 0; i < 5; i++) setTimeout(spawnComment, i * 300);
+    }
+
+    function doShuffle(manual) {
+      if (manual && shufflesLeft <= 0) return;
+      if (manual) shufflesLeft--;
+      const items = [];
+      const positions = [];
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (grid[r][c] && grid[r][c].data.id < 90) {
+            items.push(grid[r][c].data);
+            positions.push({ r, c });
+          }
+        }
+      }
+      if (items.length < 3) { if (manual) shufflesLeft++; return; }
+      for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+      positions.forEach((p, idx) => { grid[p.r][p.c] = { data: items[idx] }; });
+      if (!hasValidMoves()) {
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            if (grid[r][c] && grid[r][c].data.id < 90) grid[r][c] = { data: randomChar() };
+          }
+        }
+      }
+      showCutin(manual ? "SHUFFLE!" : "AUTO SHUFFLE!");
+      FX.fever();
+      updateUI();
+    }
+
+    window.doShuffle = doShuffle;
+    window.activateSkill = function(id) {
+      if (state !== 'PLAYING' || skillGauges[id] < SKILL_MAX) return;
+      skillGauges[id] = 0; showCutin((['\u2764','\u2666','\u2660'])[id] + ' SKILL!'); FX.fever();
+      if (id === 0) {
+        const centerR = Math.floor(ROWS / 2);
+        const centerC = Math.floor(COLS / 2);
+        const hits = [];
+        for (let dr = -3; dr <= 3; dr++) {
+          for (let dc = -3; dc <= 3; dc++) {
+            const nr = centerR + dr, nc = centerC + dc;
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] && grid[nr][nc].data.id !== 98 && grid[nr][nc].data.id !== 99) {
+              if (Math.abs(dr) + Math.abs(dc) <= 3) hits.push({ r: nr, c: nc });
+            }
+          }
+        }
+        triggerShake(true);
+        const centerPos = getCellCenter(centerR, centerC);
+        processExplosionHits(hits, centerPos);
+      } else if (id === 1) { timeLeft += 5; addFloatingText(canvasW / 2, canvasH / 2, "TIME +5", "#05d9e8"); }
+      else if (id === 2) { boostTimeLeft = 8; addFloatingText(canvasW / 2, canvasH / 2, "SCORE x2", "#00ff87"); }
+      updateUI();
+    };
+
+    function initGame() {
+      shufflesLeft = 3;
+      floatingTexts = [];
+      score = 0; timeLeft = GAME_TIME;
+      combo = 0; maxCombo = 0; comboTimer = 0;
+      feverGauge = 0; isFever = false; feverTimeLeft = 0;
+      skillGauges = [0, 0, 0]; boostTimeLeft = 0;
+      statsCleared = 0; statsCollab = 0;
+      lastChainId = -1; lastChainLength = 0;
+      document.getElementById('canvas-container').classList.remove('fever-mode');
+      createGrid();
+      fillGrid();
+      if (!hasValidMoves()) doShuffle(false);
+      updateUI();
+      showCutin("STREAM START!");
+      FX.fever();
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (state !== 'PLAYING') return;
+        timeLeft--;
+        if (boostTimeLeft > 0) boostTimeLeft--;
+        if (Math.random() < 0.05) {
+          placeItemOnBoard(ITEM_SPACHA);
+        }
+        if (isFever) {
+          feverTimeLeft--; feverGauge = (feverTimeLeft / 10) * 100;
+          if (Math.random() < 0.6) spawnComment();
+          if (feverTimeLeft <= 0) { isFever = false; feverGauge = 0; document.getElementById('canvas-container').classList.remove('fever-mode'); }
+        }
+        updateUI();
+        if (timeLeft <= 0) changeState('RESULT');
+      }, 1000);
+    }
+
+    function updateUI() {
+      document.getElementById('ui-score').innerText = score.toLocaleString();
+      document.getElementById('ui-time').innerText = timeLeft;
+      document.getElementById('ui-combo').innerText = combo;
+      document.getElementById('combo-bar').style.width = comboTimer + '%';
+      document.getElementById('fever-bar').style.width = Math.min(100, feverGauge) + '%';
+      document.getElementById('fever-pct').innerText = Math.floor(Math.min(100, feverGauge));
+      for (let i = 0; i < 3; i++) {
+        let pct = (skillGauges[i] / SKILL_MAX) * 100;
+        document.getElementById("skill-fill-" + i).style.height = pct + '%';
+        document.getElementById("skill-btn-" + i).classList.toggle('ready', pct >= 100);
+        document.getElementById("skill-notice-" + i).innerText = pct >= 100 ? 'READY' : '';
+      }
+      document.getElementById('shuffle-count').innerText = shufflesLeft;
+      document.getElementById('shuffle-btn').style.opacity = shufflesLeft <= 0 ? '0.4' : '1';
+    }
+
+    function showCutin(text) {
+      const el = document.getElementById('cutin');
+      el.innerText = text; el.style.opacity = '1'; el.style.transform = 'translate(-50%, -50%) scale(1.2)';
+      setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translate(-50%, -50%) scale(0)'; }, 1000);
+    }
+
+    function spawnComment() {
+      const texts = ["草", "888888", "たすかる", "神配信", "きたあああ", "かわいい", "最高"];
+      const el = document.createElement('div'); el.className = 'comment';
+      el.innerText = texts[Math.floor(Math.random() * texts.length)];
+      el.style.top = Math.random() * 80 + '%';
+      document.getElementById('fx-layer').appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function showResult() {
+      clearInterval(timerInterval);
+      if (score > highScore) { highScore = score; localStorage.setItem('milli_connect_hs', highScore); }
+      let rank = 'C', color = '#aaa', heat = '\u2605\u2606\u2606\u2606\u2606';
+      if (score >= 150000) { rank = 'S+'; color = '#ff007f'; heat = '\u2605\u2605\u2605\u2605\u2605'; }
+      else if (score >= 100000) { rank = 'S'; color = '#8582fb'; heat = '\u2605\u2605\u2605\u2605\u2606'; }
+      else if (score >= 50000) { rank = 'A'; color = '#b388ff'; heat = '\u2605\u2605\u2605\u2606\u2606'; }
+      else if (score >= 20000) { rank = 'B'; color = '#4ecc71'; heat = '\u2605\u2605\u2606\u2606\u2606'; }
+      const rRank = document.getElementById('res-rank');
+      rRank.innerText = 'RANK ' + rank; rRank.style.color = color;
+      document.getElementById('res-heat').innerHTML = heat;
+      document.getElementById('res-score').innerText = score.toLocaleString();
+      document.getElementById('res-combo').innerText = maxCombo;
+      document.getElementById('res-cleared').innerText = statsCleared;
+      document.getElementById('res-collab').innerText = statsCollab;
+      recordGameClear('milli-connect', score);
+    }
+
+    function gameLoop() {
+      if (state === 'PLAYING') {
+        if (combo > 0) {
+          comboTimer -= 1.2;
+          if (comboTimer <= 0) { combo = 0; comboTimer = 0; lastChainId = -1; lastChainLength = 0; updateUI(); }
+          else document.getElementById('combo-bar').style.width = comboTimer + '%';
+        }
+      }
+      ctx.clearRect(0, 0, canvasW, canvasH);
+      if (state === 'PLAYING') {
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const x = gridOffsetX + c * cellSize;
+            const y = gridOffsetY + r * cellSize;
+            ctx.fillStyle = (r + c) % 2 === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.07)';
+            ctx.fillRect(x, y, cellSize, cellSize);
+          }
+        }
+        if (selectedCells.length > 1) {
+          const firstTsum = grid[selectedCells[0].row][selectedCells[0].col];
+          const lineColor = firstTsum ? firstTsum.data.color : '#8582fb';
+          ctx.beginPath();
+          selectedCells.forEach((cell, i) => {
+            const pos = getCellCenter(cell.row, cell.col);
+            i === 0 ? ctx.moveTo(pos.x, pos.y) : ctx.lineTo(pos.x, pos.y);
+          });
+          ctx.strokeStyle = lineColor; ctx.lineWidth = cellSize * 0.3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+          ctx.stroke();
+          ctx.beginPath();
+          selectedCells.forEach((cell, i) => {
+            const pos = getCellCenter(cell.row, cell.col);
+            i === 0 ? ctx.moveTo(pos.x, pos.y) : ctx.lineTo(pos.x, pos.y);
+          });
+          ctx.strokeStyle = '#fff'; ctx.lineWidth = cellSize * 0.08;
+          ctx.stroke();
+        }
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const tsum = grid[r][c];
+            if (!tsum) continue;
+            const pos = getCellCenter(r, c);
+            const isSel = selectedCells.some(s => s.row === r && s.col === c);
+            const radius = isSel ? tsumRadius * 1.15 : tsumRadius;
+            ctx.save();
+            ctx.beginPath(); ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = tsum.data.color;
+            if (isSel || tsum.data.id >= 90) { ctx.shadowColor = tsum.data.id === 100 ? '#ff0000' : '#fff'; ctx.shadowBlur = 15; }
+            ctx.fill(); ctx.shadowBlur = 0;
+            ctx.lineWidth = 2; ctx.strokeStyle = tsum.data.id === 100 ? '#ffd700' : 'rgba(255,255,255,0.5)'; ctx.stroke();
+            ctx.fillStyle = tsum.data.textColor;
+            const fontSize = Math.max(10, cellSize * 0.35);
+            ctx.font = tsum.data.id === 100 ? `bold ${fontSize + 4}px sans-serif` : `bold ${fontSize}px sans-serif`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(tsum.data.name, pos.x, pos.y);
+            ctx.restore();
+          }
+        }
+        floatingTexts.forEach(ft => {
+          ft.life--; ft.y -= 1;
+          ctx.save(); ctx.globalAlpha = Math.max(0, ft.life / 40);
+          ctx.fillStyle = ft.color; ctx.font = 'bold 18px sans-serif';
+          ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+          ctx.textAlign = 'center'; ctx.fillText(ft.text, ft.x, ft.y);
+          ctx.restore();
+        });
+        floatingTexts = floatingTexts.filter(ft => ft.life > 0);
+      }
+      reqId = requestAnimationFrame(gameLoop);
+    }
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../firebase-init.js"></script>
+</body>
+</html>

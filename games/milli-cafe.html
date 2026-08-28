@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Milli Café - Milli Games</title>
+<meta property="og:title" content="Milli Café">
+<meta property="og:description" content="ミリプロファンメイドの3Dカフェ運営アクション。時間内に注文をこなして、最高のカフェを目指そう！">
+<meta property="og:image" content="https://milli-games.onrender.com/images/ogp.png">
+<meta property="og:url" content="https://milli-games.onrender.com/games/milli-cafe.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Milli Games">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../images/icon/favicon.ico" sizes="any">
+<link rel="icon" href="../images/icon/192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="../images/icon/192.png" sizes="192x192">
+<link rel="stylesheet" href="milli-cafe.css">
+</head>
+<body>
+<div id="game-wrap">
+
+  <!-- three.js 描画領域 -->
+  <div id="gl-wrap"></div>
+
+  <!-- ========== ゲーム内UI ========== -->
+  <div id="ui">
+
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+      <div class="hud-box" id="hud-score">
+        <div class="hud-label">SCORE</div>
+        <div class="hud-value" id="hud-score-val">0</div>
+      </div>
+      <div class="hud-box hud-time" id="hud-time-box">
+        <div class="hud-label">TIME</div>
+        <div class="hud-value" id="hud-time-val">90</div>
+      </div>
+      <div class="hud-box" id="hud-combo">
+        <div class="hud-label">COMBO</div>
+        <div class="hud-value hud-combo-val" id="hud-combo-val">x1</div>
+        <div class="hud-combo-bar"><i id="hud-combo-bar"></i></div>
+      </div>
+      <button id="hud-pause" class="icon-btn">&#10073;&#10073;</button>
+    </div>
+
+    <!-- 注文パネル -->
+    <div id="orders-panel" class="hidden"></div>
+
+    <!-- お客さんの吹き出し -->
+    <div id="bubbles"></div>
+
+    <!-- コンテキストプロンプト（頭上表示） -->
+    <div id="prompt" class="hidden"></div>
+
+    <!-- 提供先を示す矢印 -->
+    <div id="serve-arrow" class="hidden"></div>
+
+    <!-- 所持アイテム -->
+    <div id="held" class="hidden"></div>
+
+    <!-- スコアポップアップ -->
+    <div id="floating"></div>
+
+    <!-- バーチャルジョイスティック -->
+    <div id="joy-zone" class="hidden">
+      <div id="joy-base"><div id="joy-knob"></div></div>
+    </div>
+
+    <!-- アクションボタン -->
+    <div id="action-btn" class="hidden"><div id="action-btn-label">操作</div></div>
+
+    <!-- 食材選択 -->
+    <div id="shelf-chooser" class="hidden"></div>
+
+    <!-- カウントダウン -->
+    <div id="countdown" class="hidden"></div>
+
+    <!-- タスク進行トースト -->
+    <div id="toast" class="hidden"></div>
+
+    <!-- 画面遷移フェード -->
+    <div id="fade" class="fade-off"></div>
+
+    <!-- ===== タイトル画面 ===== -->
+    <div id="screen-title" class="screen">
+      <div class="title-card">
+        <div class="logo-wrap">
+          <div class="logo-emoji"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10h12v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-5Z" fill="#fff"/><path d="M16 10h2a2 2 0 0 1 0 4h-2" stroke="#fff" stroke-width="1.6" fill="none"/><path d="M3 20h14" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><path d="M6 7V4M10 7V4M14 7V4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <h1 class="logo">Milli <span>Café</span></h1>
+          <div class="logo-sub">ミリプロファンメイドゲーム</div>
+        </div>
+        <div class="menu-list">
+          <button class="menu-btn primary" id="btn-start">GAME START</button>
+          <button class="menu-btn" id="btn-howto">HOW TO PLAY</button>
+          <button class="menu-btn" id="btn-settings">SETTINGS</button>
+        </div>
+        <div class="ctrl-pick">
+          <div class="ctrl-pick-title">操作方式を選ぶ</div>
+          <div class="ctrl-pick-btns">
+            <button class="ctrl-btn" data-ctrl="keyboard" id="ctrl-keyboard">
+              <span class="ctrl-icon"><svg viewBox="0 0 64 40" aria-hidden="true"><rect x="2" y="4" width="60" height="32" rx="5" fill="#3a254f"/><g fill="#fff"><rect x="8" y="10" width="8" height="8" rx="1.5"/><rect x="20" y="10" width="8" height="8" rx="1.5"/><rect x="32" y="10" width="8" height="8" rx="1.5"/><rect x="44" y="10" width="8" height="8" rx="1.5"/><rect x="14" y="23" width="8" height="8" rx="1.5"/><rect x="26" y="23" width="8" height="8" rx="1.5"/><rect x="38" y="23" width="8" height="8" rx="1.5"/></g><rect x="20" y="12" width="24" height="3.6" rx="1.8" fill="#ff5f9e"/></svg></span>
+              <span class="ctrl-label">キーボード<br><small>WASD + SPACE</small></span>
+            </button>
+            <button class="ctrl-btn" data-ctrl="touch" id="ctrl-touch">
+              <span class="ctrl-icon"><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M6 6a16 16 0 010 20M4 2a24 24 0 010 28" stroke="#ff5f9e" stroke-width="2.6" fill="none" stroke-linecap="round"/><rect x="24" y="4" width="20" height="32" rx="3" fill="#3a254f"/><rect x="30" y="30" width="8" height="2.4" rx="1.2" fill="#9a7ab0"/><circle cx="34" cy="13" r="3.2" fill="#fff"/></svg></span>
+              <span class="ctrl-label">タッチ<br><small>ジョイスティック</small></span>
+            </button>
+          </div>
+          <button class="ctrl-auto" id="ctrl-auto">自動判定に戻す</button>
+        </div>
+        <div class="title-note">短時間で何度も遊べる、にぎやかカフェ経営アクション</div>
+      </div>
+    </div>
+
+    <!-- ===== HOW TO PLAY ===== -->
+    <div id="screen-howto" class="screen">
+      <div class="panel-card">
+        <h2 class="panel-title">HOW TO PLAY</h2>
+        <div class="howto-body">
+          <div class="howto-row"><span class="howto-num">1</span><div><b>食材を取る</b><span>食材置き場で、注文に合った食材を選ぼう</span></div></div>
+          <div class="howto-row"><span class="howto-num">2</span><div><b>調理する</b><span>オーブンやマシンで調理。焼きすぎると焦げちゃう！</span></div></div>
+          <div class="howto-row"><span class="howto-num">3</span><div><b>盛り付ける</b><span>必要な料理は盛付台でお皿に</span></div></div>
+          <div class="howto-row"><span class="howto-num">4</span><div><b>お客さんに届ける</b><span>カウンターで注文に合う料理を提供しよう</span></div></div>
+          <div class="howto-row"><span class="howto-num">5</span><div><b>時間内に多くこなそう</b><span>早く届けるほど高得点！コンボもつながる</span></div></div>
+        </div>
+        <div class="recipe-guide">
+          <div class="recipe-guide-title">レシピ</div>
+          <div class="recipe-item"><span class="recipe-name" style="color:#ff5f9e">ケーキ</span><span>ケーキ生地 → オーブン → 盛付台 → 提供</span></div>
+          <div class="recipe-item"><span class="recipe-name" style="color:#c97a3a">パン</span><span>パン生地 → オーブン → 提供</span></div>
+          <div class="recipe-item"><span class="recipe-name" style="color:#3d7bb0">ドリンク</span><span>カップ → マシン → 提供</span></div>
+          <div class="recipe-item"><span class="recipe-name" style="color:#c2537f">パフェ</span><span>フルーツ → マシン → 盛付台 → 提供</span></div>
+        </div>
+        <div class="howto-controls">
+          <div><b>PC</b><span>WASD / 矢印キーで移動、SPACEで操作、1〜4で食材を選択</span></div>
+          <div><b>スマホ</b><span>左下ジョイスティックで移動、右下ボタンで操作</span></div>
+          <div><b>変更</b><span>タイトル画面またはSETTINGSで操作方式を選べます</span></div>
+        </div>
+        <div class="panel-actions">
+          <button class="menu-btn primary" id="howto-start">GAME START</button>
+          <button class="menu-btn" id="howto-back">もどる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div id="screen-settings" class="screen">
+      <div class="panel-card">
+        <h2 class="panel-title">SETTINGS</h2>
+        <div class="setting-row">
+          <label>効果音</label>
+          <input type="range" id="set-sfx" min="0" max="100" step="5" value="80">
+          <span id="set-sfx-val">80%</span>
+        </div>
+        <div class="setting-row">
+          <label>BGM</label>
+          <input type="range" id="set-bgm" min="0" max="100" step="5" value="50">
+          <span id="set-bgm-val">50%</span>
+        </div>
+        <div class="setting-row">
+          <label>操作方式</label>
+          <select id="set-control">
+            <option value="auto">自動判定</option>
+            <option value="touch">タッチ操作</option>
+            <option value="keyboard">キーボード操作</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label>画面クオリティ</label>
+          <select id="set-quality">
+            <option value="high">高（PC向け）</option>
+            <option value="low">低（スマホ向け）</option>
+          </select>
+        </div>
+        <div class="panel-actions">
+          <button class="menu-btn primary" id="settings-back">もどる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== チュートリアル指示バー ===== -->
+    <div id="tutorial-bar" class="hidden">
+      <div class="tutorial-step" id="tutorial-text"></div>
+      <div id="tutorial-arrow"></div>
+    </div>
+
+    <!-- ===== リザルト画面 ===== -->
+    <div id="screen-result" class="screen">
+      <div class="panel-card result-card">
+        <div class="result-title">営業終了！</div>
+        <div class="rank-stars" id="result-stars"></div>
+        <div class="result-score" id="result-score">0</div>
+        <div class="result-stats">
+          <div><b id="result-served">0</b><span>提供数</span></div>
+          <div><b id="result-miss">0</b><span>ミス</span></div>
+          <div><b id="result-combo">0</b><span>最大コンボ</span></div>
+          <div><b id="result-best">0</b><span>ベスト</span></div>
+        </div>
+        <div class="panel-actions">
+          <button class="menu-btn primary" id="result-retry">もう一度遊ぶ</button>
+          <button class="menu-btn" id="result-title">タイトルへ</button>
+        </div>
+        <div class="result-note">※ プレイ記録はアプリと連携すると報酬に反映されます</div>
+      </div>
+    </div>
+
+    <!-- ===== ポーズ画面 ===== -->
+    <div id="screen-pause" class="screen">
+      <div class="panel-card">
+        <h2 class="panel-title">ポーズ</h2>
+        <div class="panel-actions">
+          <button class="menu-btn primary" id="pause-resume">つづける</button>
+          <button class="menu-btn" id="pause-title">タイトルへ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 初回警告 -->
+    <div id="device-warn">
+      快適に遊ぶため、ブラウザの回転ロックを解除して縦向き/横向きどちらでもOKです。
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script src="milli-cafe.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="../firebase-config.js"></script>
+<script src="../firebase-init.js"></script>
+</body>
+</html>

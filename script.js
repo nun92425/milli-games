@@ -178,36 +178,6 @@ window.addEventListener("beforeinstallprompt", function (e) {
 })();
 const games = [
   {
-    id: 11,
-    title: "ミリカラ",
-    description: "ミリプロ楽曲で歌おう！\n\nマイクで音程を判定するWebカラオケ。カウィバウィボなど公式インストで採点＆シェアしよう。\nオフセット調整やガイド表示で誰でも楽しめる！",
-    image: "images/games/icon/milikara-icon.png",
-    points: 150,
-    exp: "x1.3",
-    tags: ["おすすめ", "新着"],
-    link: "games/milikara.html"
-  },
-  {
-    id: 10,
-    title: "Milli Fortune",
-    description: "見下ろし2Dのカジノフロアを自由に歩き回ろう！\n\nダブルアップ・ルーレット・スロット・赤青の4ゲームが遊べる大型カジノゲーム。\nチップを賭けて、連勝と配当で所持チップを増やそう。\n\n毎日ログインボーナスもあるぞ！",
-    image: "images/games/icon/Milli Fortune-icon.png",
-    points: 150,
-    exp: "x1.3",
-    tags: ["おすすめ", "新着"],
-    link: "games/milli-fortune.html"
-  },
-  {
-    id: 9,
-    title: "みりこれ！",
-    description: "お題と同じカードを見つけ出せ！\n\nたくさん並んだカードの中から、「お題」とまったく同じイラストをタップ。\n進むほどカードが増えて、違いも見つけにくくなる…！\n\nあなたはどこまで見抜ける？",
-    image: "images/games/icon/Miri Kore-icon.png",
-    points: 100,
-    exp: "x1.2",
-    tags: ["おすすめ", "新着"],
-    link: "games/miri-kore.html"
-  },
-  {
     id: 8,
     title: "Milli Pulse",
     description: "ミリプロの音楽を、リズムに乗せて楽しもう。\n\nお気に入りの楽曲をプレイして、最高スコアを目指そう。\n刻んだリズムと積み重ねたスコアが、あなたの「推し活」の記録になる。\n\n音楽を聴く。\nリズムを刻む。\n推しへの想いを、Pulseに。",
