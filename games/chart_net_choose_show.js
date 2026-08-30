@@ -29,53 +29,23 @@ function bar(n) { return n * b4; }
 function beat(n) { return n * BEAT; }
 
 // ========================================
-// bar 0  (導入前 1小節休み)
+// 雛形: 1番左レーン (lane 0 = D) を 4分音符で 4拍 × 必要な小節数まで延々
+// EASY / NORMAL ともに同じ配置。後で code.pen で編集してください
+// 1:33 ≈ 93s ≈ bar 43 まで
 // ========================================
-// EASY
-push(bar(1) + beat(0), 1, "tap", 0, 0);
-push(bar(1) + beat(2), 2, "tap", 0, 0);
-// NORMAL
-push(bar(1) + beat(0), 1, "tap", 0, 1);
-push(bar(1) + beat(1), 2, "tap", 0, 1);
-push(bar(1) + beat(2), 1, "tap", 0, 1);
-push(bar(1) + beat(3), 2, "tap", 0, 1);
-
-// ========================================
-// bar 2
-// ========================================
-// EASY
-push(bar(2) + beat(0), 0, "tap", 0, 0);
-push(bar(2) + beat(2), 3, "tap", 0, 0);
-// NORMAL
-push(bar(2) + beat(0), 0, "tap", 0, 1);
-push(bar(2) + beat(1), 1, "tap", 0, 1);
-push(bar(2) + beat(2), 2, "tap", 0, 1);
-push(bar(2) + beat(3), 3, "tap", 0, 1);
-
-// ========================================
-// bar 3  (サビ頭などの目印に)
-// ========================================
-// EASY
-push(bar(3) + beat(0), 1, "tap", 0, 0);
-push(bar(3) + beat(2), 2, "tap", 0, 0);
-// NORMAL
-push(bar(3) + beat(0), 1, "tap", 0, 1);
-push(bar(3) + beat(1), 1, "hold", beat(1), 1);
-push(bar(3) + beat(2), 2, "tap", 0, 1);
-push(bar(3) + beat(3), 2, "tap", 0, 1);
-
-// ========================================
-// ここから下を編集して楽曲に合わせて譜面を拡張
-// bar 4 以降を 1:33 (bar 約43) まで追加してください
-// 1小節 = 2.14s なので 93s / 2.14 ≈ 43小節
-// 例:
-//   push(bar(4) + beat(0), 0, "tap", 0, 0); // EASY
-//   push(bar(4) + beat(0), 0, "tap", 0, 1); // NORMAL
-//   push(bar(4) + beat(2), 3, "hold", beat(2), 1); // ロング
-// ========================================
-
-// TODO: bar 4 - 42 を楽曲に合わせて追加
-// フェードアウト 1:33 以降はノーツを置かない (自然に終了)
+for (var n = 0; n < 44; n++) {
+  // EASY: 4分で4発
+  push(bar(n) + beat(0), 0, "tap", 0, 0);
+  push(bar(n) + beat(1), 0, "tap", 0, 0);
+  push(bar(n) + beat(2), 0, "tap", 0, 0);
+  push(bar(n) + beat(3), 0, "tap", 0, 0);
+  // NORMAL: 同じく 4分で4発 (EASYと同配置)
+  push(bar(n) + beat(0), 0, "tap", 0, 1);
+  push(bar(n) + beat(1), 0, "tap", 0, 1);
+  push(bar(n) + beat(2), 0, "tap", 0, 1);
+  push(bar(n) + beat(3), 0, "tap", 0, 1);
+}
+// 以降を楽曲に合わせて編集: 上記ループを削除し、bar ごとに push を書き換えてください
 
 notes.sort(function (a, b) { return a.t - b.t; });
 
