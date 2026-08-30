@@ -11,7 +11,8 @@
   var SONGS = [
     { id: "princess_viral", title: "Princess Viral", artist: "音ノ乃のの", bpm: 134 },
     { id: "luminous", title: "ルミナス", artist: "音ノ瀬らこ", bpm: 170 },
-    { id: "okiraku_superstar", title: "おきらくスーパースター", artist: "小廻こま", bpm: 178 }
+    { id: "okiraku_superstar", title: "おきらくスーパースター", artist: "小廻こま", bpm: 178 },
+    { id: "net_choose_show", title: "net choose show", artist: "雨夜リズ", bpm: 112 }
   ];
 
   // ============================================
