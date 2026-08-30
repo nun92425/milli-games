@@ -29,23 +29,21 @@ function bar(n) { return n * b4; }
 function beat(n) { return n * BEAT; }
 
 // ========================================
-// 雛形: 1番左レーン (lane 0 = D) を 4分音符で 4拍 × 必要な小節数まで延々
-// EASY / NORMAL ともに同じ配置。後で code.pen で編集してください
-// 1:33 ≈ 93s ≈ bar 43 まで
+// 雛形: 1番左レーン (lane 0 = D) を 4分音符で 4拍 × bar34まで延々
+// EASY / NORMAL ともに同じ配置
 // ========================================
-for (var n = 0; n < 44; n++) {
+for (var n = 0; n <= 34; n++) {
   // EASY: 4分で4発
   push(bar(n) + beat(0), 0, "tap", 0, 0);
   push(bar(n) + beat(1), 0, "tap", 0, 0);
   push(bar(n) + beat(2), 0, "tap", 0, 0);
   push(bar(n) + beat(3), 0, "tap", 0, 0);
-  // NORMAL: 同じく 4分で4発 (EASYと同配置)
+  // NORMAL: 同じく 4分で4発
   push(bar(n) + beat(0), 0, "tap", 0, 1);
   push(bar(n) + beat(1), 0, "tap", 0, 1);
   push(bar(n) + beat(2), 0, "tap", 0, 1);
   push(bar(n) + beat(3), 0, "tap", 0, 1);
 }
-// 以降を楽曲に合わせて編集: 上記ループを削除し、bar ごとに push を書き換えてください
 
 notes.sort(function (a, b) { return a.t - b.t; });
 
