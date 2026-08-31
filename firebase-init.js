@@ -1,233 +1,376 @@
-// Firebase 初期化・共通ヘルパ（Milli Games / Milli Unishare 共有バックエンド連携）
-// 設定手順は「連携ハンドオフ.md」§6 を参照。
-// config 未設定（apiKey が空）の間は連携機能は無効（エラーも出さない）
-var firebaseReady = false;
+// Firebase 初期化（config 未設定なら何もしない）
+// config 変数名は Firebase コンソール貼り付け時の firebaseConfig と、
+// ハンドオフ資料記載の FIREBASE_CONFIG のどちらでも受け付ける
+var firebaseReady = false
 
 function getFirebaseConfig() {
-  if (typeof FIREBASE_CONFIG !== "undefined" && FIREBASE_CONFIG) return FIREBASE_CONFIG;
-  if (typeof firebaseConfig !== "undefined" && firebaseConfig) return firebaseConfig;
-  return null;
+  if (typeof FIREBASE_CONFIG !== 'undefined' && FIREBASE_CONFIG) return FIREBASE_CONFIG
+  if (typeof firebaseConfig !== 'undefined' && firebaseConfig) return firebaseConfig
+  return null
 }
 
 function initFirebase() {
-  if (firebaseReady || typeof firebase === "undefined") return;
-  var cfg = getFirebaseConfig();
-  if (!cfg || !cfg.apiKey || !cfg.databaseURL) return;
-  firebase.initializeApp(cfg);
-  firebaseReady = true;
+  if (firebaseReady || typeof firebase === 'undefined') return
+  var cfg = getFirebaseConfig()
+  if (!cfg || !cfg.apiKey || !cfg.databaseURL) return
+  try {
+    firebase.initializeApp(cfg)
+    firebaseReady = true
+  } catch (e) {
+    console.warn('Firebase init failed:', e)
+  }
 }
 
+// 連携が利用可能か（config 設定済み + SDK 読込済み）
 function firebaseAvailable() {
-  return firebaseReady && typeof firebase !== "undefined";
+  initFirebase()
+  // database SDK が読込めていない場合は利用不可扱い（部分的なCDN障害で例外を出さない）
+  return firebaseReady && typeof firebase.database === 'function'
 }
 
-// 本アプリ（Millipro-Chronicle）が保存する localStorage の playerId を読む
+// 本アプリが発行した playerId を取得（milli-unishare / milli-games と共通形式）
 function getMilliproPlayerId() {
   try {
-    var ud = JSON.parse(localStorage.getItem("millipro_userdata"));
-    return ud && ud.playerId ? ud.playerId : null;
-  } catch (e) { return null; }
+    var ud = JSON.parse(localStorage.getItem('millipro_userdata'))
+    return ud && ud.playerId ? ud.playerId : null
+  } catch (e) {
+    return null
+  }
 }
 
-// 連携IDの手動設定（ログイン不要フォールバック用・§1-4）
+// 連携IDを手動設定（ログイン不要の「ID持ち込み方式」用。各サイトの入力UIから呼ぶ）
 function setMilliproPlayerId(id) {
-  var ud = null;
-  try { ud = JSON.parse(localStorage.getItem("millipro_userdata")); } catch (e) {}
-  if (!ud || typeof ud !== "object") ud = { createdAt: Date.now() };
-  ud.playerId = String(id);
-  ud.updatedAt = Date.now();
-  localStorage.setItem("millipro_userdata", JSON.stringify(ud));
-  return ud;
+  var ud = null
+  try { ud = JSON.parse(localStorage.getItem('millipro_userdata')) } catch (e) {}
+  if (!ud || typeof ud !== 'object') ud = { createdAt: Date.now() }
+  ud.playerId = String(id)
+  ud.updatedAt = Date.now()
+  localStorage.setItem('millipro_userdata', JSON.stringify(ud))
+  return ud
 }
 
-// ミニゲームクリアイベントを送信（ゲームIDはサイト内で一意な小文字・ハイフン形式）
+// ミニゲームクリアイベントを送信（Milli Games用・ゲームIDはサイト内で一意な小文字・ハイフン形式）
 function recordGameClear(gameId, score) {
-  initFirebase();
-  var pid = getMilliproPlayerId();
-  if (!firebaseReady || !pid || !gameId) return;
-  firebase.database().ref("millipro/gameEvents/" + pid + "/" + gameId + "/" + Date.now())
+  initFirebase()
+  var pid = getMilliproPlayerId()
+  if (!firebaseReady || !pid || !gameId) return
+  firebase.database().ref('millipro/gameEvents/' + pid + '/' + gameId + '/' + Date.now())
     .set({ score: score || 0, playedAt: Date.now() })
-    .catch(function (e) { console.warn("gameEvent write failed", e); });
+    .catch(function (e) { console.warn('gameEvent write failed', e) })
 }
 
-// ---------- アカウント連携（Firebase Auth・§2-4） ----------
+// ============================================================
+// Milli Orbis アカウント（Firebase Auth）: 3サイトすべてが同じユーザーを使う
+// 中心は Milli Orbis。データパスは従来どおり millipro/ 配下
+//   millipro/users/{uid}/profile = { playerId, playerName, icon, comment, updatedAt }
+//   millipro/users/{uid}/gamedata = ゲームデータ（本アプリのみ同期）
+// 名前・アイコン・一言は各サイト共通で表示できる（各サイトのローカルに反映）
+// ============================================================
+
+// 全サイト共通のタレント一覧（単一ソース）。全サイト共通プロフィール(最推し/推し)の他、
+// 本アプリのセットアップ・ダンジョンの「推し選択」・アイコン等でも参照する。
+// battle: 配信ダンジョンでのタイプ別バフ（±15%程度、勝率を壊さない範囲）
+//   atk型=次の一撃重視 / def型=被ダメを抑える / balance=平均
+var MILLIPRO_TALENTS = {
+  konomi: { name: '甘狼このみ', group: null, battle: { atk: 1.0,  def: 1.0  } },
+  nono:   { name: '音ノ乃のの',   group: null, battle: { atk: 1.0,  def: 1.0  } },
+  akubi:  { name: 'あくび・でもんすぺーど', group: null, battle: { atk: 1.15, def: 0.9  } },
+  rako:   { name: '音ノ瀬らこ',   group: 'nova', battle: { atk: 1.15, def: 0.9  } },
+  yura:   { name: 'ゆらぎゆら',   group: 'nova', battle: { atk: 0.9,  def: 1.2  } },
+  koma:   { name: '小廻こま',     group: null, battle: { atk: 0.9,  def: 1.2  } },
+  rizu:   { name: '雨夜リズ',     group: 'uni',  battle: { atk: 1.15, def: 0.9  } },
+  tukuri: { name: '眠雲ツクリ',   group: 'uni',  battle: { atk: 0.9,  def: 1.2  } },
+  nuhu:   { name: '虹深°ぬふ',    group: 'nova', battle: { atk: 1.0,  def: 1.0  } },
+  rei:    { name: '夕霧レイ',     group: 'uni',  battle: { atk: 1.15, def: 0.9  } },
+  mahoro: { name: '鹿乃まほろ',   group: null, battle: { atk: 1.0,  def: 1.0  } },
+}
+
+// 最推し/推しをローカル（millipro_userdata）から取得
+// ログイン後は applyMilliproProfile でクラウドの値が反映済み
+// 戻り値: { ultimateOshi: string|null, favorites: string[] }
+function getMilliproOshi() {
+  var ud = null
+  try { ud = JSON.parse(localStorage.getItem('millipro_userdata')) } catch (e) {}
+  var ultimate = ud && MILLIPRO_TALENTS[ud.ultimateOshi] ? ud.ultimateOshi : null
+  var favs = (ud && Array.isArray(ud.favorites)) ? ud.favorites.filter(function (id) { return MILLIPRO_TALENTS[id] }).slice(0, 10) : []
+  return { ultimateOshi: ultimate, favorites: favs }
+}
+
+// 最推し/推しをローカル + クラウド（ログイン中のみ）に保存
+// クラウドの profile.ultimateOshi / profile.favorites は全サイト共通
+// 戻り値: Promise<boolean>（クラウドに保存できたか。未ログインでもローカル保存は行う）
+function updateMilliproOshi(ultimateOshi, favorites) {
+  var ud = null
+  try { ud = JSON.parse(localStorage.getItem('millipro_userdata')) } catch (e) {}
+  if (!ud || typeof ud !== 'object') ud = { createdAt: Date.now() }
+  var ult = ultimateOshi && MILLIPRO_TALENTS[ultimateOshi] ? ultimateOshi : null
+  var favs = (Array.isArray(favorites) ? favorites : []).filter(function (id) { return MILLIPRO_TALENTS[id] }).slice(0, 10)
+  ud.ultimateOshi = ult
+  ud.favorites = favs
+  ud.updatedAt = Date.now()
+  localStorage.setItem('millipro_userdata', JSON.stringify(ud))
+  var uid = getMilliproUid()
+  if (!uid) return Promise.resolve(false)
+  return updateMilliproProfile({ ultimateOshi: ult, favorites: favs })
+}
 
 function isAuthAvailable() {
-  return firebaseAvailable() && typeof firebase.auth === "function";
+  return firebaseAvailable() && typeof firebase.auth === 'function'
 }
 
 function getMilliproUid() {
-  if (!isAuthAvailable()) return null;
-  var u = firebase.auth().currentUser;
-  return u ? u.uid : null;
+  if (!isAuthAvailable()) return null
+  var u = firebase.auth().currentUser
+  return u ? u.uid : null
 }
 
 // ログイン状態の変化を監視（未ログイン/未設定なら null を渡す）
 function onMilliproAuth(cb) {
-  if (!isAuthAvailable()) { cb(null); return; }
+  if (!isAuthAvailable()) {
+    cb(null)
+    return
+  }
   firebase.auth().onAuthStateChanged(function (user) {
-    cb(user ? user.uid : null);
-  });
+    cb(user ? user.uid : null)
+  })
 }
 
 function milliproLogin(email, password) {
-  if (!isAuthAvailable()) return Promise.reject(new Error("auth unavailable"));
-  return firebase.auth().signInWithEmailAndPassword(email, password);
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  return firebase.auth().signInWithEmailAndPassword(email, password)
 }
 
 function milliproSignup(email, password) {
-  if (!isAuthAvailable()) return Promise.reject(new Error("auth unavailable"));
-  return firebase.auth().createUserWithEmailAndPassword(email, password);
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  return firebase.auth().createUserWithEmailAndPassword(email, password)
 }
 
 function milliproLogout() {
-  if (!isAuthAvailable()) return Promise.resolve();
-  return firebase.auth().signOut();
+  if (!isAuthAvailable()) return Promise.resolve()
+  return firebase.auth().signOut()
 }
 
-// 最推し / 推しで使うタレントID一覧（全サイト共通・§2-4「最推し/推しの共有」）
-var MILLIPRO_TALENTS = {
-  konomi: { name: "甘狼このみ" },
-  rizu:   { name: "雨夜リズ" },
-  nono:   { name: "音ノ乃のの" },
-  tukuri: { name: "眠雲ツクリ" },
-  akubi:  { name: "あくび・でもんすぺーど" },
-  nuhu:   { name: "虹深°ぬふ" },
-  rako:   { name: "音ノ瀬らこ" },
-  rei:    { name: "夕霧レイ" },
-  yura:   { name: "ゆらぎゆら" },
-  koma:   { name: "小廻こま" }
-};
+// ============================================================
+// OAuth ログイン（Google / X）: 無料枠のまま利用可能
+// Apple は Apple Developer Program が必要なため本リポジトリでは未対応
+// Discord / LINE は Firebase ネイティブ非対応（Functions 等のバックエンドが必要）のため未対応
+// ============================================================
 
-// パスワード再設定メールを送信（全サイト共通。リセット後に自サイトへ戻る）
+// アプリ内ブラウザ（X / LINE / Instagram 等）は popup がブロックされるため redirect を使う
+function isOAuthInAppBrowser() {
+  var ua = (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent : ''
+  return /Twitter|Line|Instagram|FBAN|FBAV|FB_IAB|FBAN\/Messenger/i.test(ua)
+}
+
+function signInWithOAuthProvider(provider) {
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  // アプリ内ブラウザでは最初から redirect
+  if (isOAuthInAppBrowser()) {
+    return firebase.auth().signInWithRedirect(provider)
+  }
+  return firebase.auth().signInWithPopup(provider).catch(function (e) {
+    // popup がブロックされた場合は redirect にフォールバック
+    if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) {
+      // popup-blocked 時のみ redirect、それ以外はそのまま失敗として扱う（ユーザが閉じた等はエラー表示で十分）
+      if (e.code === 'auth/popup-blocked') {
+        return firebase.auth().signInWithRedirect(provider)
+      }
+    }
+    return Promise.reject(e)
+  })
+}
+
+function milliproLoginWithGoogle() {
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  var provider = new firebase.auth.GoogleAuthProvider()
+  // 既存アカウントとリンクしやすいよう prompt を追加（任意）
+  try { provider.setCustomParameters({ prompt: 'select_account' }) } catch (e) {}
+  return signInWithOAuthProvider(provider)
+}
+
+function milliproLoginWithTwitter() {
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  var provider = new firebase.auth.TwitterAuthProvider()
+  return signInWithOAuthProvider(provider)
+}
+
+// リダイレクトで戻ってきた直後の結果を回収する（エラー表示用）
+// onAuthStateChanged でも uid は取れるが、account-exists-with-different-credential 等の
+// エラーは getRedirectResult の reject でしか取れないため、起動時に一度呼ぶ
+function consumeMilliproRedirectResult() {
+  if (!isAuthAvailable() || typeof firebase.auth().getRedirectResult !== 'function') return Promise.resolve(null)
+  return firebase.auth().getRedirectResult().catch(function (e) {
+    return Promise.reject(e)
+  })
+}
+
+function oauthErrorMessage(e) {
+  if (!e || !e.code) return (e && e.message) || 'エラーが発生しました。'
+  if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') return 'ログインがキャンセルされました。'
+  if (e.code === 'auth/popup-blocked') return 'ポップアップがブロックされました。リダイレクトで再試行しています...'
+  if (e.code === 'auth/account-exists-with-different-credential') return 'このメールアドレスは既に別のログイン方法（メール/ Google / X）で登録されています。元の方法でログインした後、マイページで紐付けてください。'
+  if (e.code === 'auth/credential-already-in-use') return 'この Google/X アカウントは既に別のアカウントに紐付けられています。'
+  if (e.code === 'auth/requires-recent-login') return 'セキュリティのため再ログインが必要です。一度ログアウトして再ログインしてください。'
+  if (e.code === 'auth/network-request-failed') return '通信エラーです。接続を確認してください。'
+  if (e.code === 'auth/user-disabled') return 'このアカウントは無効化されています。'
+  if (e.code === 'auth/operation-not-allowed') return 'このログイン方法は現在無効です。管理者にお問い合わせください。'
+  return e.message || 'エラーが発生しました。'
+}
+
+// ---- アカウント紐付け（ログイン中に別プロバイダを追加） ----
+function getLinkedProviders() {
+  if (!isAuthAvailable()) return []
+  var u = firebase.auth().currentUser
+  if (!u || !u.providerData) return []
+  return u.providerData.map(function (p) { return p.providerId })
+}
+
+function linkWithOAuthProvider(provider) {
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  var user = firebase.auth().currentUser
+  if (!user) return Promise.reject(new Error('not logged in'))
+  if (isOAuthInAppBrowser()) {
+    return user.linkWithRedirect(provider)
+  }
+  return user.linkWithPopup(provider).catch(function (e) {
+    if (e && e.code === 'auth/popup-blocked') {
+      return user.linkWithRedirect(provider)
+    }
+    return Promise.reject(e)
+  })
+}
+
+function milliproLinkWithGoogle() {
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  var provider = new firebase.auth.GoogleAuthProvider()
+  try { provider.setCustomParameters({ prompt: 'select_account' }) } catch (e) {}
+  return linkWithOAuthProvider(provider)
+}
+
+function milliproLinkWithTwitter() {
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  var provider = new firebase.auth.TwitterAuthProvider()
+  return linkWithOAuthProvider(provider)
+}
+
+function milliproUnlink(providerId) {
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
+  var user = firebase.auth().currentUser
+  if (!user) return Promise.reject(new Error('not logged in'))
+  if (!providerId) return Promise.reject(new Error('no provider'))
+  // 最低1つは残す（Firebase 側でも弾かれるが先にガード）
+  var linked = getLinkedProviders()
+  if (linked.length <= 1) return Promise.reject({ code: 'auth/no-such-provider', message: '最後のログイン方法は解除できません。' })
+  return user.unlink(providerId)
+}
+
+function milliproUnlinkWithGoogle() { return milliproUnlink('google.com') }
+function milliproUnlinkWithTwitter() { return milliproUnlink('twitter.com') }
+function milliproUnlinkWithPassword() { return milliproUnlink('password') }
+
+// パスワード再設定メールを送信（どのサイトからでも共通アカウントに対して送れる）
+// リセット後に戻る URL は呼び出し元サイトのオリジンを指定する（他のサイトでも同じ関数を使う）
 function milliproResetPassword(email) {
-  if (!isAuthAvailable()) return Promise.reject(new Error("auth unavailable"));
+  if (!isAuthAvailable()) return Promise.reject(new Error('auth unavailable'))
   return firebase.auth().sendPasswordResetEmail(String(email).trim(), {
-    url: (typeof window !== "undefined" && window.location && window.location.origin) ? window.location.origin + "/" : "",
-    handleCodeInApp: false
-  });
+    url: (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin + '/' : '',
+    handleCodeInApp: false,
+  })
 }
 
 function newPlayerIdFallback() {
-  if (typeof crypto !== "undefined" && crypto && typeof crypto.randomUUID === "function") return crypto.randomUUID();
-  return "P" + Date.now();
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  return 'P' + Date.now()
 }
 
-// プロフィールを保証する（無ければローカルの playerId / 名前 / アイコン / 一言で作成）→ Promise<profile>
+// プロフィールを保証する（無ければローカルの playerId / 名前 / アイコン / 一言で作成）
+// 既存プロフィールに欠けている項目はローカル値で補充する
+// 戻り値: Promise<profile>
 function ensureMilliproProfile(uid) {
-  var ud = null;
-  try { ud = JSON.parse(localStorage.getItem("millipro_userdata")); } catch (e) {}
-  var localId = ud && ud.playerId;
-  var localName = ud && ud.playerName;
-  var localIcon = ud && ud.icon;
-  var localComment = ud && ud.comment;
-  var localUltimateOshi = ud && MILLIPRO_TALENTS[ud.ultimateOshi] ? ud.ultimateOshi : null;
-  var localFavorites = (ud && Array.isArray(ud.favorites)) ? ud.favorites.filter(function (id) { return MILLIPRO_TALENTS[id]; }).slice(0, 10) : [];
+  var ud = null
+  try { ud = JSON.parse(localStorage.getItem('millipro_userdata')) } catch (e) {}
+  var localId = ud && ud.playerId
+  var localName = ud && ud.playerName
+  var localIcon = ud && ud.icon
+  var localComment = ud && ud.comment
+  var localUltimateOshi = ud && MILLIPRO_TALENTS[ud.ultimateOshi] ? ud.ultimateOshi : null
+  var localFavorites = (ud && Array.isArray(ud.favorites)) ? ud.favorites.filter(function (id) { return MILLIPRO_TALENTS[id] }).slice(0, 10) : []
 
-  return firebase.database().ref("millipro/users/" + uid + "/profile").once("value").then(function (snap) {
-    var p = snap.val();
-    var now = Date.now();
-    if (p && typeof p === "object") {
-      var changed = false;
-      if (!p.playerId) { p.playerId = localId || newPlayerIdFallback(); changed = true; }
-      if (!p.playerName && localName) { p.playerName = localName; changed = true; }
-      if (!p.icon && localIcon) { p.icon = localIcon; changed = true; }
-      if (!p.comment && localComment) { p.comment = localComment; changed = true; }
-      if (!p.ultimateOshi && localUltimateOshi) { p.ultimateOshi = localUltimateOshi; changed = true; }
-      if (!p.favorites && localFavorites.length) { p.favorites = localFavorites; changed = true; }
-      if (changed) firebase.database().ref("millipro/users/" + uid + "/profile").set(p);
-      return p;
+  return firebase.database().ref('millipro/users/' + uid + '/profile').once('value').then(function (snap) {
+    var p = snap.val()
+    var now = Date.now()
+    if (p && typeof p === 'object') {
+      var changed = false
+      if (!p.playerId) { p.playerId = localId || newPlayerIdFallback(); changed = true }
+      if (!p.playerName && localName) { p.playerName = localName; changed = true }
+      if (!p.icon && localIcon) { p.icon = localIcon; changed = true }
+      if (!p.comment && localComment) { p.comment = localComment; changed = true }
+      if (!p.ultimateOshi && localUltimateOshi) { p.ultimateOshi = localUltimateOshi; changed = true }
+      if (!p.favorites && localFavorites.length) { p.favorites = localFavorites; changed = true }
+      if (changed) firebase.database().ref('millipro/users/' + uid + '/profile').set(p)
+      return p
     }
     var np = {
       playerId: localId || newPlayerIdFallback(),
-      playerName: localName || "",
-      icon: localIcon || "",
-      comment: localComment || "",
+      playerName: localName || '',
+      icon: localIcon || '',
+      comment: localComment || '',
       ultimateOshi: localUltimateOshi,
       favorites: localFavorites,
-      updatedAt: now
-    };
-    firebase.database().ref("millipro/users/" + uid + "/profile").set(np);
-    return np;
-  });
+      updatedAt: now,
+    }
+    firebase.database().ref('millipro/users/' + uid + '/profile').set(np)
+    return np
+  })
 }
 
-// profile の playerId / playerName / icon / comment / 最推し / 推し をこの端末の localStorage に反映（他項目は保持）
+// プロフィールの playerId / playerName / icon / comment をこの端末の localStorage に反映（他項目は保持）
+// 戻り値: 反映後のユーザーデータ（なければ新規作成）
 function applyMilliproProfile(profile) {
-  var ud = null;
-  try { ud = JSON.parse(localStorage.getItem("millipro_userdata")); } catch (e) {}
-  if (!ud || typeof ud !== "object") ud = { createdAt: Date.now() };
-  ud.playerId = profile.playerId;
-  if (profile.playerName) ud.playerName = profile.playerName;
-  if (profile.icon) ud.icon = profile.icon;
-  if (profile.comment) ud.comment = profile.comment;
-  if (profile.ultimateOshi && MILLIPRO_TALENTS[profile.ultimateOshi]) ud.ultimateOshi = profile.ultimateOshi;
+  var ud = null
+  try { ud = JSON.parse(localStorage.getItem('millipro_userdata')) } catch (e) {}
+  if (!ud || typeof ud !== 'object') ud = { createdAt: Date.now() }
+  ud.playerId = profile.playerId
+  if (profile.playerName) ud.playerName = profile.playerName
+  if (profile.icon) ud.icon = profile.icon
+  if (profile.comment) ud.comment = profile.comment
+  if (profile.ultimateOshi && MILLIPRO_TALENTS[profile.ultimateOshi]) ud.ultimateOshi = profile.ultimateOshi
   if (Array.isArray(profile.favorites)) {
-    ud.favorites = profile.favorites.filter(function (id) { return MILLIPRO_TALENTS[id]; }).slice(0, 10);
+    ud.favorites = profile.favorites.filter(function (id) { return MILLIPRO_TALENTS[id] }).slice(0, 10)
   }
-  ud.updatedAt = Date.now();
-  localStorage.setItem("millipro_userdata", JSON.stringify(ud));
-  return ud;
+  ud.updatedAt = Date.now()
+  localStorage.setItem('millipro_userdata', JSON.stringify(ud))
+  return ud
 }
 
 // プロフィールの一部をクラウドに保存（ログイン中のみ。未ログインなら何もしない）
-// patch 例: { icon: '😊' } や { playerName: '...', comment: '...' } や { ultimateOshi: 'konomi', favorites: [...] }
+// patch 例: { icon: '😊' } や { playerName: '...', comment: '...' }
 // 戻り値: Promise<boolean>（保存できたか）
 function updateMilliproProfile(patch) {
-  if (!isAuthAvailable()) return Promise.resolve(false);
-  var uid = getMilliproUid();
-  if (!uid) return Promise.resolve(false);
-  if (!patch || typeof patch !== "object") return Promise.resolve(false);
-  patch.updatedAt = Date.now();
-  var ref = firebase.database().ref("millipro/users/" + uid + "/profile");
-  return ref.once("value").then(function (snap) {
-    var p = snap.val();
-    if (p && typeof p === "object") return ref.update(patch);
-    return ref.set(patch);
-  }).then(function () { return true; }).catch(function (e) {
-    console.warn("profile update failed:", e);
-    return false;
-  });
-}
-
-// 最推し / 推しをローカル（+ ログイン中はクラウド）に保存する
-// 不正IDの除去・10人上限の切り詰めを自動で行う
-// 戻り値: Promise<boolean>（クラウドに保存できたか。未ログインなら false）
-function updateMilliproOshi(ultimateId, favIds) {
-  var ud = null;
-  try { ud = JSON.parse(localStorage.getItem("millipro_userdata")); } catch (e) {}
-  if (!ud || typeof ud !== "object") ud = { createdAt: Date.now() };
-  var ult = MILLIPRO_TALENTS[ultimateId] ? ultimateId : null;
-  var favs = Array.isArray(favIds) ? favIds.filter(function (id) { return MILLIPRO_TALENTS[id]; }).slice(0, 10) : [];
-  if (ult) {
-    ud.ultimateOshi = ult;
-    if (favs.indexOf(ult) < 0) favs.unshift(ult);
-  } else {
-    ud.ultimateOshi = null;
-  }
-  ud.favorites = favs.slice(0, 10);
-  ud.updatedAt = Date.now();
-  localStorage.setItem("millipro_userdata", JSON.stringify(ud));
-  return updateMilliproProfile({ ultimateOshi: ud.ultimateOshi, favorites: ud.favorites });
-}
-
-// ローカルの最推し / 推しをまとめて返す
-function getMilliproOshi() {
-  var ud = null;
-  try { ud = JSON.parse(localStorage.getItem("millipro_userdata")); } catch (e) {}
-  var ult = ud && MILLIPRO_TALENTS[ud.ultimateOshi] ? ud.ultimateOshi : null;
-  var favs = (ud && Array.isArray(ud.favorites)) ? ud.favorites.filter(function (id) { return MILLIPRO_TALENTS[id]; }).slice(0, 10) : [];
-  return { ultimateOshi: ult, favorites: favs };
+  if (!isAuthAvailable()) return Promise.resolve(false)
+  var uid = getMilliproUid()
+  if (!uid) return Promise.resolve(false)
+  if (!patch || typeof patch !== 'object') return Promise.resolve(false)
+  patch.updatedAt = Date.now()
+  var ref = firebase.database().ref('millipro/users/' + uid + '/profile')
+  return ref.once('value').then(function (snap) {
+    var p = snap.val()
+    if (p && typeof p === 'object') return ref.update(patch)
+    return ref.set(patch)
+  }).then(function () { return true }).catch(function (e) {
+    console.warn('profile update failed:', e)
+    return false
+  })
 }
 
 // ログイン時にまとめて実行（Unishare / Games 版。gamedata 同期は本アプリのみの仕事）
+// 戻り値: Promise<profile>
 function completeMilliproLogin(uid) {
   return ensureMilliproProfile(uid).then(function (profile) {
-    applyMilliproProfile(profile);
-    return profile;
-  });
+    applyMilliproProfile(profile)
+    return profile
+  })
 }
-
 // localStorage の連携情報と Auth メールをまとめて返す
 function mpProfileInfo() {
   var ud = null;
@@ -266,6 +409,7 @@ function mpRender(uid) {
     form.style.display = "none";
     ok.style.display = "block";
     document.getElementById("mp-pid").textContent = getMilliproPlayerId() || uid;
+    try { if (typeof mpUpdateLinkedProviders === 'function') mpUpdateLinkedProviders(); } catch (e) {}
   } else {
     form.style.display = "block";
     ok.style.display = "none";
@@ -424,7 +568,33 @@ function mpSetId() {
   alert("連携IDを保存しました: " + v);
 }
 
+function mpUpdateLinkedProviders() {
+  var el = document.getElementById("mp-linked-providers");
+  if (!el) return;
+  try {
+    var providers = typeof getLinkedProviders === 'function' ? getLinkedProviders() : [];
+    // getLinkedProviders is async in chronicle (returns Promise), but local old version may be sync. Handle both.
+    if (providers && typeof providers.then === 'function') {
+      providers.then(function(p){ el.textContent = p && p.length ? '連携: ' + p.join(', ') : '連携: メールのみ'; });
+    } else {
+      el.textContent = providers && providers.length ? '連携: ' + providers.join(', ') : '連携: メールのみ';
+    }
+  } catch (e) { el.textContent = ''; }
+}
+
 initFirebase();
+
+// リダイレクトログインの結果を回収（X/Googleでリダイレクトした場合のエラー表示）
+try {
+  if (typeof consumeMilliproRedirectResult === 'function') {
+    consumeMilliproRedirectResult().catch(function(e){
+      var msg = typeof oauthErrorMessage === 'function' ? oauthErrorMessage(e) : String(e);
+      var m = document.getElementById('mp-msg');
+      if (m) m.textContent = msg;
+      else alert(msg);
+    });
+  }
+} catch (e) {}
 
 // 画面初期化時に1回呼ぶ（auth 未設定でも mpRender(null) になるだけで安全）
 onMilliproAuth(function (uid) {

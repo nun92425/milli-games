@@ -1,27 +1,33 @@
 /* ============================================
    Milli Games - カスタムカーソル JS
    移植元: milli-unishare-preview js/video.js + js/storage.js
-   32px .cur 対応、完成5種のみ有効
+   32px .cur 対応、全タレント対応版 (11 + 1)
    ============================================ */
 "use strict";
 (function () {
   var CURSOR_KEY = "milpro_cursor";
 
-  // 完成5種のみ。残り6種は将来追加（コメントアウトを解除してCSSも有効化）
+  // 全タレント対応 (preview準拠 + milli-chan)
   var CURSOR_TALENTS = [
-    { id: "mahoro", name: "鹿乃まほろ" },
-    { id: "rako",   name: "音ノ瀬らこ" },
-    { id: "yura",   name: "ゆらぎゆら" },
-    { id: "rei",    name: "夕霧レイ" },
-    { id: "nuhu",   name: "虹深°ぬふ" }
-    // 未完成（今は無効）
-    // { id: "konomi", name: "こま" }, // 例: 正式名に置換
-    // { id: "nono", name: "—" },
-    // { id: "akubi", name: "—" },
-    // { id: "koma", name: "—" },
-    // { id: "rizu", name: "—" },
-    // { id: "tsukuri", name: "—" },
+    { id: "mahoro",  name: "鹿乃まほろ" },
+    { id: "rako",    name: "音ノ瀬らこ" },
+    { id: "yura",    name: "ゆらぎゆら" },
+    { id: "rei",     name: "夕霧レイ" },
+    { id: "nuhu",    name: "虹深°ぬふ" },
+    { id: "konomi",  name: "甘狼このみ" },
+    { id: "nono",    name: "音ノ乃のの" },
+    { id: "akubi",   name: "あくび・でもんすぺーど" },
+    { id: "koma",    name: "小廻こま" },
+    { id: "rizu",    name: "雨夜リズ" },
+    { id: "tsukuri", name: "眠雲ツクリ" },
+    { id: "milli-chan", name: "ミリちゃん" }
   ];
+
+  function normalizeId(id) {
+    if (id === "tukuri") return "tsukuri"; // 旧表記エイリアス
+    if (id === "milpro" || id === "miri") return "milli-chan";
+    return id;
+  }
 
   function isGamesPage() {
     return location.pathname.indexOf("/games/") !== -1;
@@ -60,7 +66,7 @@
       // OFF
     } else {
       html.classList.add("cursor-custom");
-      var id = (s.talentId && s.talentId !== "default") ? s.talentId : "";
+      var id = (s.talentId && s.talentId !== "default") ? normalizeId(s.talentId) : "";
       if (id) html.classList.add("cursor-" + id);
     }
     // ヘッダーUI更新
@@ -77,24 +83,24 @@
     var label = document.getElementById("cursorTopLabel");
     var preview = document.getElementById("cursorTopPreview");
     var btn = document.getElementById("cursorTopBtn");
+    var normId = s && s.talentId ? normalizeId(s.talentId) : "";
     var talent = null;
-    if (s && s.enabled && s.talentId && s.talentId !== "default") {
-      for (var i = 0; i < CURSOR_TALENTS.length; i++) if (CURSOR_TALENTS[i].id === s.talentId) { talent = CURSOR_TALENTS[i]; break; }
+    if (s && s.enabled && normId && normId !== "default") {
+      for (var i = 0; i < CURSOR_TALENTS.length; i++) if (CURSOR_TALENTS[i].id === normId) { talent = CURSOR_TALENTS[i]; break; }
     }
     if (label) {
       if (!s || !s.enabled) label.textContent = "カーソルOFF";
       else if (talent) label.textContent = talent.name;
-      else if (s.talentId === "default") label.textContent = "デフォルト";
+      else if (normId === "default") label.textContent = "デフォルト";
       else label.textContent = "カーソル";
     }
     if (preview) {
       if (s && s.enabled && talent) {
-        // 将来 talent-icons があればそちらを優先、なければ cursors/{id}.png
-        preview.style.backgroundImage = "url('" + cursorBase() + s.talentId + ".png')";
+        preview.style.backgroundImage = "url('" + cursorBase() + normId + ".png')";
         preview.style.backgroundSize = "cover";
         preview.style.backgroundColor = "#fff";
         preview.style.backgroundPosition = "center";
-      } else if (s && s.enabled && s.talentId === "default") {
+      } else if (s && s.enabled && normId === "default") {
         preview.style.backgroundImage = "url('" + cursorBase() + "default.png')";
         preview.style.backgroundSize = "cover";
         preview.style.backgroundColor = "#fff";
@@ -109,7 +115,7 @@
     for (var j = 0; j < items.length; j++) {
       var el = items[j];
       var id = el.getAttribute("data-id");
-      var curId = !s || !s.enabled ? "__off" : (s.talentId || "default");
+      var curId = !s || !s.enabled ? "__off" : (normId || "default");
       el.classList.toggle("active", id === curId);
     }
     // ハンバーガー側も同期
@@ -117,7 +123,7 @@
     for (var k = 0; k < mItems.length; k++) {
       var me = mItems[k];
       var mid = me.getAttribute("data-id");
-      var mcur = !s || !s.enabled ? "__off" : (s.talentId || "default");
+      var mcur = !s || !s.enabled ? "__off" : (normId || "default");
       me.classList.toggle("active", mid === mcur);
     }
   }
@@ -158,7 +164,7 @@
         var id = el.getAttribute("data-id");
         var s;
         if (id === "__off") s = { enabled: false, talentId: "default" };
-        else s = { enabled: true, talentId: id };
+        else s = { enabled: true, talentId: normalizeId(id) };
         saveCursorSettings(s);
         applyCursor(s);
         dd.classList.remove("open");
@@ -176,6 +182,8 @@
     var btn = document.getElementById("cursorTopBtn");
     var dd = document.getElementById("cursorDropdown");
     if (!wrap || !btn || !dd) return;
+    if (wrap.dataset.cursorInit === "1") return;
+    wrap.dataset.cursorInit = "1";
     // preview と同様: JSロード後に表示（CSSの @media でPCのみ表示）
     wrap.style.display = "";
     renderDropdown();
@@ -218,7 +226,8 @@
     );
     for (var i = 0; i < items.length; i++) {
       var it = items[i];
-      var curId = !cur.enabled ? "__off" : (cur.talentId || "default");
+      var normCur = cur.talentId ? normalizeId(cur.talentId) : "default";
+      var curId = !cur.enabled ? "__off" : (normCur || "default");
       var active = it.id === curId ? " active" : "";
       var iconHtml = it.icon
         ? '<img src="' + it.icon + '" alt="" onerror="this.src=\'' + base + 'default.png\'">'
@@ -229,7 +238,7 @@
     panel.querySelectorAll(".menu-cursor-item").forEach(function (el) {
       el.addEventListener("click", function () {
         var id = el.getAttribute("data-id");
-        var s = id === "__off" ? { enabled: false, talentId: "default" } : { enabled: true, talentId: id };
+        var s = id === "__off" ? { enabled: false, talentId: "default" } : { enabled: true, talentId: normalizeId(id) };
         saveCursorSettings(s);
         applyCursor(s);
         renderMenuList();
@@ -239,11 +248,10 @@
   }
 
   function updateMenuUI(s) {
-    // applyCursor から呼ばれる。renderではなくactive切替のみでも良いが再描画の方が確実
-    // ここでは軽量に active 切替のみ（renderMenuListは既に呼んでいる場合の差分）
     var panel = document.getElementById("menuCursorList");
     if (!panel || !panel.children.length) return;
-    var curId = !s || !s.enabled ? "__off" : (s.talentId || "default");
+    var norm = s && s.talentId ? normalizeId(s.talentId) : "default";
+    var curId = !s || !s.enabled ? "__off" : (norm || "default");
     panel.querySelectorAll(".menu-cursor-item").forEach(function (el) {
       el.classList.toggle("active", el.getAttribute("data-id") === curId);
     });

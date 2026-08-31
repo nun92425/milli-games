@@ -206,6 +206,11 @@
               <button type="button" id="mp-tab-signup" class="mp-tab" onclick="mpTab('signup')">新規登録</button>
             </div>
             <div id="mp-panel-login">
+              <div class="oauth-buttons" style="display:flex; gap:8px; margin-bottom:12px">
+                <button type="button" class="oauth-btn oauth-google" onclick="milliproLoginWithGoogle().catch(function(e){var m=document.getElementById('mp-msg'); m.textContent=typeof oauthErrorMessage==='function'?oauthErrorMessage(e):String(e);})"><span class="oauth-icon">G</span> Googleでログイン</button>
+                <button type="button" class="oauth-btn oauth-twitter" onclick="milliproLoginWithTwitter().catch(function(e){var m=document.getElementById('mp-msg'); m.textContent=typeof oauthErrorMessage==='function'?oauthErrorMessage(e):String(e);})"><span class="oauth-icon">𝕏</span> Xでログイン</button>
+              </div>
+              <div class="oauth-divider" style="text-align:center; margin:8px 0; color:#999; font-size:0.8rem"><span>または</span></div>
               <div class="mp-field-row">
                 <input id="mp-email" class="mp-input" type="email" placeholder="メールアドレス" autocomplete="email">
               </div>
@@ -219,6 +224,11 @@
               <button type="button" class="mp-forgot" onclick="mpResetPassword()">パスワードをお忘れですか？</button>
             </div>
             <div id="mp-panel-signup" style="display:none">
+              <div class="oauth-buttons" style="display:flex; gap:8px; margin-bottom:12px">
+                <button type="button" class="oauth-btn oauth-google" onclick="milliproLoginWithGoogle().catch(function(e){var m=document.getElementById('mp-msg'); m.textContent=typeof oauthErrorMessage==='function'?oauthErrorMessage(e):String(e);})"><span class="oauth-icon">G</span> Googleで登録</button>
+                <button type="button" class="oauth-btn oauth-twitter" onclick="milliproLoginWithTwitter().catch(function(e){var m=document.getElementById('mp-msg'); m.textContent=typeof oauthErrorMessage==='function'?oauthErrorMessage(e):String(e);})"><span class="oauth-icon">𝕏</span> Xで登録</button>
+              </div>
+              <div class="oauth-divider" style="text-align:center; margin:8px 0; color:#999; font-size:0.8rem"><span>または</span></div>
               <div class="mp-field-row">
                 <input id="mp2-email" class="mp-input" type="email" placeholder="メールアドレス" autocomplete="email">
               </div>
@@ -238,9 +248,16 @@
           </div>
           <div id="mp-account-ok" style="display:none">
             <div class="mp-row">連携ID: <b id="mp-pid"></b></div>
+            <div class="mp-row" id="mp-linked-providers" style="font-size:0.8rem; color:#666; margin-top:6px"></div>
             <div class="mp-actions">
               <button class="mp-btn mp-btn-outline" onclick="mpCopyId()">IDをコピー</button>
               <button class="mp-btn mp-btn-outline" onclick="mpLogout()">ログアウト</button>
+            </div>
+            <div class="mp-actions" style="margin-top:8px; gap:6px; flex-wrap:wrap">
+              <button class="mp-btn mp-btn-outline" onclick="milliproLinkWithGoogle().then(function(){mpUpdateLinkedProviders()}).catch(function(e){alert(typeof oauthErrorMessage==='function'?oauthErrorMessage(e):String(e))})" style="font-size:0.75rem">Googleを紐付け</button>
+              <button class="mp-btn mp-btn-outline" onclick="milliproLinkWithTwitter().then(function(){mpUpdateLinkedProviders()}).catch(function(e){alert(typeof oauthErrorMessage==='function'?oauthErrorMessage(e):String(e))})" style="font-size:0.75rem">Xを紐付け</button>
+              <button class="mp-btn mp-btn-outline" onclick="milliproUnlinkWithGoogle().then(function(){mpUpdateLinkedProviders()}).catch(function(e){alert(String(e))})" style="font-size:0.75rem">Google解除</button>
+              <button class="mp-btn mp-btn-outline" onclick="milliproUnlinkWithTwitter().then(function(){mpUpdateLinkedProviders()}).catch(function(e){alert(String(e))})" style="font-size:0.75rem">X解除</button>
             </div>
           </div>
           <div id="mp-id-input" class="mp-id-input">

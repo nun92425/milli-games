@@ -5,24 +5,25 @@
    ============================================ */
 
 /* ── ベース: OFF以外は全要素にカスタムカーソル ── */
-html.cursor-custom * { cursor: url('images/cursors/default.png') 8 8, auto !important; }
+html.cursor-custom * { cursor: url('/images/cursors/default.png') 8 8, auto !important; }
 
-/* 完成5種: .cur (hotspot内蔵) + .png フォールバック */
-html.cursor-custom.cursor-mahoro * { cursor: url('images/cursors/mahoro.cur'), url('images/cursors/mahoro.png') 1 1, auto !important; }
-html.cursor-custom.cursor-rako * { cursor: url('images/cursors/rako.cur'), url('images/cursors/rako.png') 1 6, auto !important; }
-html.cursor-custom.cursor-yura * { cursor: url('images/cursors/yura.cur'), url('images/cursors/yura.png') 2 6, auto !important; }
-html.cursor-custom.cursor-rei * { cursor: url('images/cursors/rei.cur'), url('images/cursors/rei.png') 1 3, auto !important; }
-html.cursor-custom.cursor-nuhu * { cursor: url('images/cursors/nuhu.cur'), url('images/cursors/nuhu.png') 2 6, auto !important; }
-
-/* 未完成6種は今は無効（将来追加時は下記を有効化） */
-/*
-html.cursor-custom.cursor-konomi * { cursor: url('images/cursors/konomi.png') 8 8, auto !important; }
-html.cursor-custom.cursor-nono * { cursor: url('images/cursors/nono.png') 8 8, auto !important; }
-html.cursor-custom.cursor-akubi * { cursor: url('images/cursors/akubi.png') 8 8, auto !important; }
-html.cursor-custom.cursor-koma * { cursor: url('images/cursors/koma.png') 8 8, auto !important; }
-html.cursor-custom.cursor-rizu * { cursor: url('images/cursors/rizu.png') 8 8, auto !important; }
-html.cursor-custom.cursor-tsukuri * { cursor: url('images/cursors/tsukuri.png') 8 8, auto !important; }
-*/
+/* 全タレント: .cur (hotspot内蔵) + .png フォールバック — preview準拠 */
+html.cursor-custom.cursor-konomi * { cursor: url('/images/cursors/konomi.cur'), url('/images/cursors/konomi.png') 2 6, auto !important; }
+html.cursor-custom.cursor-nono * { cursor: url('/images/cursors/nono.cur'), url('/images/cursors/nono.png') 2 6, auto !important; }
+html.cursor-custom.cursor-akubi * { cursor: url('/images/cursors/akubi.cur'), url('/images/cursors/akubi.png') 2 6, auto !important; }
+html.cursor-custom.cursor-rako * { cursor: url('/images/cursors/rako.cur'), url('/images/cursors/rako.png') 1 6, auto !important; }
+html.cursor-custom.cursor-yura * { cursor: url('/images/cursors/yura.cur'), url('/images/cursors/yura.png') 2 6, auto !important; }
+html.cursor-custom.cursor-koma * { cursor: url('/images/cursors/koma.cur'), url('/images/cursors/koma.png') 2 6, auto !important; }
+html.cursor-custom.cursor-rizu * { cursor: url('/images/cursors/rizu.cur'), url('/images/cursors/rizu.png') 2 6, auto !important; }
+html.cursor-custom.cursor-tsukuri * { cursor: url('/images/cursors/tsukuri.cur'), url('/images/cursors/tsukuri.png') 2 6, auto !important; }
+html.cursor-custom.cursor-tukuri * { cursor: url('/images/cursors/tsukuri.cur'), url('/images/cursors/tsukuri.png') 2 6, auto !important; }
+html.cursor-custom.cursor-nuhu * { cursor: url('/images/cursors/nuhu.cur'), url('/images/cursors/nuhu.png') 2 6, auto !important; }
+html.cursor-custom.cursor-rei * { cursor: url('/images/cursors/rei.cur'), url('/images/cursors/rei.png') 1 3, auto !important; }
+html.cursor-custom.cursor-mahoro * { cursor: url('/images/cursors/mahoro.cur'), url('/images/cursors/mahoro.png') 1 1, auto !important; }
+html.cursor-custom.cursor-milli-chan * { cursor: url('/images/cursors/milli-chan.cur'), url('/images/cursors/milli-chan.png') 2 6, auto !important; }
+html.cursor-custom.cursor-milpro * { cursor: url('/images/cursors/milli-chan.cur'), url('/images/cursors/milli-chan.png') 2 6, auto !important; }
+html.cursor-custom.cursor-miri * { cursor: url('/images/cursors/milli-chan.cur'), url('/images/cursors/milli-chan.png') 2 6, auto !important; }
+html.cursor-custom.cursor-default * { cursor: url('/images/cursors/default.png') 8 8, auto !important; }
 
 /* ── タレント別差分（Hand / Beam / Wait）: 完成5種のみ ── */
 /* Hand: リンク・ボタン・カード上で手のカーソル */
@@ -33,17 +34,17 @@ html.cursor-custom.cursor-mahoro .card-btn:hover,
 html.cursor-custom.cursor-mahoro .fab:hover,
 html.cursor-custom.cursor-mahoro .carousel-dot:hover,
 html.cursor-custom.cursor-mahoro .menu-popup-btn:hover,
-html.cursor-custom.cursor-mahoro .filter-tab:hover { cursor: url('images/cursors/mahoro/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-mahoro .filter-tab:hover { cursor: url('/images/cursors/mahoro/hand.cur'), pointer !important; }
 
 html.cursor-custom.cursor-mahoro input:hover,
 html.cursor-custom.cursor-mahoro textarea:hover,
 html.cursor-custom.cursor-mahoro select:hover,
-html.cursor-custom.cursor-mahoro [contenteditable]:hover { cursor: url('images/cursors/mahoro/beam.cur'), text !important; }
+html.cursor-custom.cursor-mahoro [contenteditable]:hover { cursor: url('/images/cursors/mahoro/beam.cur'), text !important; }
 
 html.cursor-custom.cursor-mahoro .loading-overlay,
 html.cursor-custom.cursor-mahoro .loading,
 html.cursor-custom.cursor-mahoro .overlay,
-html.cursor-custom.cursor-mahoro .loading-spinner { cursor: url('images/cursors/mahoro/wait.cur'), wait !important; }
+html.cursor-custom.cursor-mahoro .loading-spinner { cursor: url('/images/cursors/mahoro/wait.cur'), wait !important; }
 
 html.cursor-custom.cursor-rei a:hover,
 html.cursor-custom.cursor-rei button:hover,
@@ -52,13 +53,13 @@ html.cursor-custom.cursor-rei .card-btn:hover,
 html.cursor-custom.cursor-rei .fab:hover,
 html.cursor-custom.cursor-rei .carousel-dot:hover,
 html.cursor-custom.cursor-rei .menu-popup-btn:hover,
-html.cursor-custom.cursor-rei .filter-tab:hover { cursor: url('images/cursors/rei/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-rei .filter-tab:hover { cursor: url('/images/cursors/rei/hand.cur'), pointer !important; }
 html.cursor-custom.cursor-rei input:hover,
 html.cursor-custom.cursor-rei textarea:hover,
-html.cursor-custom.cursor-rei select:hover { cursor: url('images/cursors/rei/beam.cur'), text !important; }
+html.cursor-custom.cursor-rei select:hover { cursor: url('/images/cursors/rei/beam.cur'), text !important; }
 html.cursor-custom.cursor-rei .loading-overlay,
 html.cursor-custom.cursor-rei .loading,
-html.cursor-custom.cursor-rei .overlay { cursor: url('images/cursors/rei/wait.cur'), wait !important; }
+html.cursor-custom.cursor-rei .overlay { cursor: url('/images/cursors/rei/wait.cur'), wait !important; }
 
 html.cursor-custom.cursor-nuhu a:hover,
 html.cursor-custom.cursor-nuhu button:hover,
@@ -67,13 +68,13 @@ html.cursor-custom.cursor-nuhu .card-btn:hover,
 html.cursor-custom.cursor-nuhu .fab:hover,
 html.cursor-custom.cursor-nuhu .carousel-dot:hover,
 html.cursor-custom.cursor-nuhu .menu-popup-btn:hover,
-html.cursor-custom.cursor-nuhu .filter-tab:hover { cursor: url('images/cursors/nuhu/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-nuhu .filter-tab:hover { cursor: url('/images/cursors/nuhu/hand.cur'), pointer !important; }
 html.cursor-custom.cursor-nuhu input:hover,
 html.cursor-custom.cursor-nuhu textarea:hover,
-html.cursor-custom.cursor-nuhu select:hover { cursor: url('images/cursors/nuhu/beam.cur'), text !important; }
+html.cursor-custom.cursor-nuhu select:hover { cursor: url('/images/cursors/nuhu/beam.cur'), text !important; }
 html.cursor-custom.cursor-nuhu .loading-overlay,
 html.cursor-custom.cursor-nuhu .loading,
-html.cursor-custom.cursor-nuhu .overlay { cursor: url('images/cursors/nuhu/wait.cur'), wait !important; }
+html.cursor-custom.cursor-nuhu .overlay { cursor: url('/images/cursors/nuhu/wait.cur'), wait !important; }
 
 html.cursor-custom.cursor-rako a:hover,
 html.cursor-custom.cursor-rako button:hover,
@@ -82,13 +83,13 @@ html.cursor-custom.cursor-rako .card-btn:hover,
 html.cursor-custom.cursor-rako .fab:hover,
 html.cursor-custom.cursor-rako .carousel-dot:hover,
 html.cursor-custom.cursor-rako .menu-popup-btn:hover,
-html.cursor-custom.cursor-rako .filter-tab:hover { cursor: url('images/cursors/rako/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-rako .filter-tab:hover { cursor: url('/images/cursors/rako/hand.cur'), pointer !important; }
 html.cursor-custom.cursor-rako input:hover,
 html.cursor-custom.cursor-rako textarea:hover,
-html.cursor-custom.cursor-rako select:hover { cursor: url('images/cursors/rako/beam.cur'), text !important; }
+html.cursor-custom.cursor-rako select:hover { cursor: url('/images/cursors/rako/beam.cur'), text !important; }
 html.cursor-custom.cursor-rako .loading-overlay,
 html.cursor-custom.cursor-rako .loading,
-html.cursor-custom.cursor-rako .overlay { cursor: url('images/cursors/rako/wait.cur'), wait !important; }
+html.cursor-custom.cursor-rako .overlay { cursor: url('/images/cursors/rako/wait.cur'), wait !important; }
 
 html.cursor-custom.cursor-yura a:hover,
 html.cursor-custom.cursor-yura button:hover,
@@ -97,13 +98,183 @@ html.cursor-custom.cursor-yura .card-btn:hover,
 html.cursor-custom.cursor-yura .fab:hover,
 html.cursor-custom.cursor-yura .carousel-dot:hover,
 html.cursor-custom.cursor-yura .menu-popup-btn:hover,
-html.cursor-custom.cursor-yura .filter-tab:hover { cursor: url('images/cursors/yura/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-yura .filter-tab:hover { cursor: url('/images/cursors/yura/hand.cur'), pointer !important; }
 html.cursor-custom.cursor-yura input:hover,
 html.cursor-custom.cursor-yura textarea:hover,
-html.cursor-custom.cursor-yura select:hover { cursor: url('images/cursors/yura/beam.cur'), text !important; }
+html.cursor-custom.cursor-yura select:hover { cursor: url('/images/cursors/yura/beam.cur'), text !important; }
 html.cursor-custom.cursor-yura .loading-overlay,
 html.cursor-custom.cursor-yura .loading,
-html.cursor-custom.cursor-yura .overlay { cursor: url('images/cursors/yura/wait.cur'), wait !important; }
+html.cursor-custom.cursor-yura .overlay { cursor: url('/images/cursors/yura/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-konomi a:hover,
+html.cursor-custom.cursor-konomi button:hover,
+html.cursor-custom.cursor-konomi .game-card:hover,
+html.cursor-custom.cursor-konomi .card-btn:hover,
+html.cursor-custom.cursor-konomi .fab:hover,
+html.cursor-custom.cursor-konomi .carousel-dot:hover,
+html.cursor-custom.cursor-konomi .menu-popup-btn:hover,
+html.cursor-custom.cursor-konomi .filter-tab:hover { cursor: url('/images/cursors/konomi/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-konomi input:hover,
+html.cursor-custom.cursor-konomi textarea:hover,
+html.cursor-custom.cursor-konomi select:hover,
+html.cursor-custom.cursor-konomi [contenteditable]:hover { cursor: url('/images/cursors/konomi/beam.cur'), text !important; }
+html.cursor-custom.cursor-konomi .loading-overlay,
+html.cursor-custom.cursor-konomi .loading,
+html.cursor-custom.cursor-konomi .overlay,
+html.cursor-custom.cursor-konomi .loading-spinner { cursor: url('/images/cursors/konomi/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-nono a:hover,
+html.cursor-custom.cursor-nono button:hover,
+html.cursor-custom.cursor-nono .game-card:hover,
+html.cursor-custom.cursor-nono .card-btn:hover,
+html.cursor-custom.cursor-nono .fab:hover,
+html.cursor-custom.cursor-nono .carousel-dot:hover,
+html.cursor-custom.cursor-nono .menu-popup-btn:hover,
+html.cursor-custom.cursor-nono .filter-tab:hover { cursor: url('/images/cursors/nono/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-nono input:hover,
+html.cursor-custom.cursor-nono textarea:hover,
+html.cursor-custom.cursor-nono select:hover,
+html.cursor-custom.cursor-nono [contenteditable]:hover { cursor: url('/images/cursors/nono/beam.cur'), text !important; }
+html.cursor-custom.cursor-nono .loading-overlay,
+html.cursor-custom.cursor-nono .loading,
+html.cursor-custom.cursor-nono .overlay,
+html.cursor-custom.cursor-nono .loading-spinner { cursor: url('/images/cursors/nono/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-akubi a:hover,
+html.cursor-custom.cursor-akubi button:hover,
+html.cursor-custom.cursor-akubi .game-card:hover,
+html.cursor-custom.cursor-akubi .card-btn:hover,
+html.cursor-custom.cursor-akubi .fab:hover,
+html.cursor-custom.cursor-akubi .carousel-dot:hover,
+html.cursor-custom.cursor-akubi .menu-popup-btn:hover,
+html.cursor-custom.cursor-akubi .filter-tab:hover { cursor: url('/images/cursors/akubi/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-akubi input:hover,
+html.cursor-custom.cursor-akubi textarea:hover,
+html.cursor-custom.cursor-akubi select:hover,
+html.cursor-custom.cursor-akubi [contenteditable]:hover { cursor: url('/images/cursors/akubi/beam.cur'), text !important; }
+html.cursor-custom.cursor-akubi .loading-overlay,
+html.cursor-custom.cursor-akubi .loading,
+html.cursor-custom.cursor-akubi .overlay,
+html.cursor-custom.cursor-akubi .loading-spinner { cursor: url('/images/cursors/akubi/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-koma a:hover,
+html.cursor-custom.cursor-koma button:hover,
+html.cursor-custom.cursor-koma .game-card:hover,
+html.cursor-custom.cursor-koma .card-btn:hover,
+html.cursor-custom.cursor-koma .fab:hover,
+html.cursor-custom.cursor-koma .carousel-dot:hover,
+html.cursor-custom.cursor-koma .menu-popup-btn:hover,
+html.cursor-custom.cursor-koma .filter-tab:hover { cursor: url('/images/cursors/koma/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-koma input:hover,
+html.cursor-custom.cursor-koma textarea:hover,
+html.cursor-custom.cursor-koma select:hover,
+html.cursor-custom.cursor-koma [contenteditable]:hover { cursor: url('/images/cursors/koma/beam.cur'), text !important; }
+html.cursor-custom.cursor-koma .loading-overlay,
+html.cursor-custom.cursor-koma .loading,
+html.cursor-custom.cursor-koma .overlay,
+html.cursor-custom.cursor-koma .loading-spinner { cursor: url('/images/cursors/koma/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-rizu a:hover,
+html.cursor-custom.cursor-rizu button:hover,
+html.cursor-custom.cursor-rizu .game-card:hover,
+html.cursor-custom.cursor-rizu .card-btn:hover,
+html.cursor-custom.cursor-rizu .fab:hover,
+html.cursor-custom.cursor-rizu .carousel-dot:hover,
+html.cursor-custom.cursor-rizu .menu-popup-btn:hover,
+html.cursor-custom.cursor-rizu .filter-tab:hover { cursor: url('/images/cursors/rizu/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-rizu input:hover,
+html.cursor-custom.cursor-rizu textarea:hover,
+html.cursor-custom.cursor-rizu select:hover,
+html.cursor-custom.cursor-rizu [contenteditable]:hover { cursor: url('/images/cursors/rizu/beam.cur'), text !important; }
+html.cursor-custom.cursor-rizu .loading-overlay,
+html.cursor-custom.cursor-rizu .loading,
+html.cursor-custom.cursor-rizu .overlay,
+html.cursor-custom.cursor-rizu .loading-spinner { cursor: url('/images/cursors/rizu/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-tsukuri a:hover,
+html.cursor-custom.cursor-tsukuri button:hover,
+html.cursor-custom.cursor-tsukuri .game-card:hover,
+html.cursor-custom.cursor-tsukuri .card-btn:hover,
+html.cursor-custom.cursor-tsukuri .fab:hover,
+html.cursor-custom.cursor-tsukuri .carousel-dot:hover,
+html.cursor-custom.cursor-tsukuri .menu-popup-btn:hover,
+html.cursor-custom.cursor-tsukuri .filter-tab:hover { cursor: url('/images/cursors/tsukuri/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-tsukuri input:hover,
+html.cursor-custom.cursor-tsukuri textarea:hover,
+html.cursor-custom.cursor-tsukuri select:hover,
+html.cursor-custom.cursor-tsukuri [contenteditable]:hover { cursor: url('/images/cursors/tsukuri/beam.cur'), text !important; }
+html.cursor-custom.cursor-tsukuri .loading-overlay,
+html.cursor-custom.cursor-tsukuri .loading,
+html.cursor-custom.cursor-tsukuri .overlay,
+html.cursor-custom.cursor-tsukuri .loading-spinner { cursor: url('/images/cursors/tsukuri/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-tukuri a:hover,
+html.cursor-custom.cursor-tukuri button:hover,
+html.cursor-custom.cursor-tukuri .game-card:hover,
+html.cursor-custom.cursor-tukuri .card-btn:hover,
+html.cursor-custom.cursor-tukuri .fab:hover,
+html.cursor-custom.cursor-tukuri .carousel-dot:hover,
+html.cursor-custom.cursor-tukuri .menu-popup-btn:hover,
+html.cursor-custom.cursor-tukuri .filter-tab:hover { cursor: url('/images/cursors/tsukuri/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-tukuri input:hover,
+html.cursor-custom.cursor-tukuri textarea:hover,
+html.cursor-custom.cursor-tukuri select:hover,
+html.cursor-custom.cursor-tukuri [contenteditable]:hover { cursor: url('/images/cursors/tsukuri/beam.cur'), text !important; }
+html.cursor-custom.cursor-tukuri .loading-overlay,
+html.cursor-custom.cursor-tukuri .loading,
+html.cursor-custom.cursor-tukuri .overlay,
+html.cursor-custom.cursor-tukuri .loading-spinner { cursor: url('/images/cursors/tsukuri/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-milli-chan a:hover,
+html.cursor-custom.cursor-milli-chan button:hover,
+html.cursor-custom.cursor-milli-chan .game-card:hover,
+html.cursor-custom.cursor-milli-chan .card-btn:hover,
+html.cursor-custom.cursor-milli-chan .fab:hover,
+html.cursor-custom.cursor-milli-chan .carousel-dot:hover,
+html.cursor-custom.cursor-milli-chan .menu-popup-btn:hover,
+html.cursor-custom.cursor-milli-chan .filter-tab:hover { cursor: url('/images/cursors/milli-chan/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-milli-chan input:hover,
+html.cursor-custom.cursor-milli-chan textarea:hover,
+html.cursor-custom.cursor-milli-chan select:hover,
+html.cursor-custom.cursor-milli-chan [contenteditable]:hover { cursor: url('/images/cursors/milli-chan/beam.cur'), text !important; }
+html.cursor-custom.cursor-milli-chan .loading-overlay,
+html.cursor-custom.cursor-milli-chan .loading,
+html.cursor-custom.cursor-milli-chan .overlay,
+html.cursor-custom.cursor-milli-chan .loading-spinner { cursor: url('/images/cursors/milli-chan/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-milpro a:hover,
+html.cursor-custom.cursor-milpro button:hover,
+html.cursor-custom.cursor-milpro .game-card:hover,
+html.cursor-custom.cursor-milpro .card-btn:hover,
+html.cursor-custom.cursor-milpro .fab:hover,
+html.cursor-custom.cursor-milpro .carousel-dot:hover,
+html.cursor-custom.cursor-milpro .menu-popup-btn:hover,
+html.cursor-custom.cursor-milpro .filter-tab:hover { cursor: url('/images/cursors/milli-chan/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-milpro input:hover,
+html.cursor-custom.cursor-milpro textarea:hover,
+html.cursor-custom.cursor-milpro select:hover,
+html.cursor-custom.cursor-milpro [contenteditable]:hover { cursor: url('/images/cursors/milli-chan/beam.cur'), text !important; }
+html.cursor-custom.cursor-milpro .loading-overlay,
+html.cursor-custom.cursor-milpro .loading,
+html.cursor-custom.cursor-milpro .overlay,
+html.cursor-custom.cursor-milpro .loading-spinner { cursor: url('/images/cursors/milli-chan/wait.cur'), wait !important; }
+
+html.cursor-custom.cursor-miri a:hover,
+html.cursor-custom.cursor-miri button:hover,
+html.cursor-custom.cursor-miri .game-card:hover,
+html.cursor-custom.cursor-miri .card-btn:hover,
+html.cursor-custom.cursor-miri .fab:hover,
+html.cursor-custom.cursor-miri .carousel-dot:hover,
+html.cursor-custom.cursor-miri .menu-popup-btn:hover,
+html.cursor-custom.cursor-miri .filter-tab:hover { cursor: url('/images/cursors/milli-chan/hand.cur'), pointer !important; }
+html.cursor-custom.cursor-miri input:hover,
+html.cursor-custom.cursor-miri textarea:hover,
+html.cursor-custom.cursor-miri select:hover,
+html.cursor-custom.cursor-miri [contenteditable]:hover { cursor: url('/images/cursors/milli-chan/beam.cur'), text !important; }
+html.cursor-custom.cursor-miri .loading-overlay,
+html.cursor-custom.cursor-miri .loading,
+html.cursor-custom.cursor-miri .overlay,
+html.cursor-custom.cursor-miri .loading-spinner { cursor: url('/images/cursors/milli-chan/wait.cur'), wait !important; }
 
 /* カルーセルドラッグ中は grabbing を優先 */
 html.cursor-custom #carousel-track.dragging,
