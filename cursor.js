@@ -7,19 +7,19 @@
 (function () {
   var CURSOR_KEY = "milpro_cursor";
 
-  // 全タレント対応 (preview準拠 + milli-chan)
+  // 全タレント対応 — デビュー順 (甘狼このみ → ミリちゃん)
   var CURSOR_TALENTS = [
-    { id: "mahoro",  name: "鹿乃まほろ" },
-    { id: "rako",    name: "音ノ瀬らこ" },
-    { id: "yura",    name: "ゆらぎゆら" },
-    { id: "rei",     name: "夕霧レイ" },
-    { id: "nuhu",    name: "虹深°ぬふ" },
-    { id: "konomi",  name: "甘狼このみ" },
-    { id: "nono",    name: "音ノ乃のの" },
-    { id: "akubi",   name: "あくび・でもんすぺーど" },
-    { id: "koma",    name: "小廻こま" },
-    { id: "rizu",    name: "雨夜リズ" },
-    { id: "tsukuri", name: "眠雲ツクリ" },
+    { id: "konomi",  name: "甘狼このみ" }, // 0期 2022-12-23
+    { id: "nono",    name: "音ノ乃のの" }, // 1期 2023-06-03
+    { id: "akubi",   name: "あくび・でもんすぺーど" }, // 2期
+    { id: "koma",    name: "小廻こま" }, // 3期 2024-12-15
+    { id: "rako",    name: "音ノ瀬らこ" }, // Nova
+    { id: "yura",    name: "ゆらぎゆら" }, // Nova
+    { id: "nuhu",    name: "虹深°ぬふ" }, // Nova
+    { id: "tsukuri", name: "眠雲ツクリ" }, // UNI 2025-05-17
+    { id: "rizu",    name: "雨夜リズ" }, // UNI 2025-05-18
+    { id: "rei",     name: "夕霧レイ" }, // UNI 2026-07-11
+    { id: "mahoro",  name: "鹿乃まほろ" }, // SONA
     { id: "milli-chan", name: "ミリちゃん" }
   ];
 
@@ -141,12 +141,6 @@
       '<span>OFF（標準）</span>' +
       '<span class="check">\u2713</span></button>'
     );
-    var defActive = cur.enabled && cur.talentId === "default" ? " active" : "";
-    items.push(
-      '<button class="cursor-dropdown-item' + defActive + '" data-id="default" role="menuitem">' +
-      '<img src="' + base + 'default.png" alt="" onerror="this.style.display=\'none\'">' +
-      '<span>デフォルト</span><span class="check">\u2713</span></button>'
-    );
     for (var i = 0; i < CURSOR_TALENTS.length; i++) {
       var m = CURSOR_TALENTS[i];
       var active = cur.enabled && cur.talentId === m.id ? " active" : "";
@@ -221,7 +215,6 @@
     var base = cursorBase();
     var html = "";
     var items = [{ id: "__off", name: "OFF（標準）", icon: null }].concat(
-      [{ id: "default", name: "デフォルト", icon: base + "default.png" }],
       CURSOR_TALENTS.map(function (m) { return { id: m.id, name: m.name, icon: base + m.id + ".png" }; })
     );
     for (var i = 0; i < items.length; i++) {
