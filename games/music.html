@@ -19,8 +19,30 @@
   <link rel="apple-touch-icon" href="../images/games/icon/Milli Pulse -icon.png" sizes="192x192">
   <link rel="stylesheet" href="music.css">
   <link rel="stylesheet" href="../cursor.css">
+  <style>
+    .ua-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:opacity 0.3s}
+    .ua-overlay.ua-hidden{display:none;opacity:0}
+    .ua-card{max-width:360px;width:88%;background:rgba(255,255,255,0.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:20px;border:1px solid rgba(255,255,255,0.5);box-shadow:0 16px 48px rgba(45,27,78,0.2);overflow:hidden;animation:uaFadeIn 0.35s ease}
+    @keyframes uaFadeIn{0%{opacity:0;transform:translateY(20px) scale(0.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    .ua-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0}
+    .ua-title{font-size:1rem;font-weight:800;color:#8582fb;letter-spacing:0.02em}
+    .ua-close{width:28px;height:28px;border:none;border-radius:50%;background:rgba(45,27,78,0.06);color:rgba(45,27,78,0.3);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;line-height:1}
+    .ua-body{padding:12px 20px 20px;font-size:0.88rem;line-height:1.7;color:rgba(45,27,78,0.7)}
+    .ua-body strong{color:#2d1b4e}
+    .ua-blocking .ua-close{display:none}
+    .ua-blocking .ua-card{border-color:rgba(133,130,251,0.3)}
+  </style>
 </head>
 <body>
+  <div id="ua-overlay" class="ua-overlay ua-hidden">
+    <div class="ua-card">
+      <div class="ua-header">
+        <span id="ua-title" class="ua-title"></span>
+        <button id="ua-close" class="ua-close">&times;</button>
+      </div>
+      <div id="ua-body" class="ua-body"></div>
+    </div>
+  </div>
   <div id="top-bar">
     <a href="../index.html" id="back-link"><img src="../images/rogo.png" alt="Milli Games" class="header-logo"></a>
     <img src="../images/games/rogo/Milli Pulse-rogo.png" alt="Milli Pulse" class="game-logo">
@@ -159,6 +181,7 @@
   <script src="chart_net_choose_show.js"></script>
   <script src="music.js"></script>
   <script src="../cursor.js"></script>
+  <script src="ua-guard.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>

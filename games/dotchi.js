@@ -715,6 +715,7 @@
       "\u30E9\u30F3\u30AF: " + lastResult.rank + "\n" +
       "\u6700\u5927\u30B3\u30F3\u30DC: " + lastResult.maxCombo + "\n" +
       "#MilliChoice #\u30DF\u30EA\u30D7\u30ED #MilliGames\n" +
+      "\u25BC\u3053\u3061\u3089\u3067\u30D7\u30EC\u30A4\uFF01\n" +
       "https://milli-games.onrender.com/games/dotchi.html";
   }
 

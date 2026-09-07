@@ -878,14 +878,14 @@
                     var blob = await (await fetch(url)).blob();
                     var file = new File([blob], "milikara.png", { type: "image/png" });
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({ files: [file], title: "ミリカラ", text: "ミリカラで " + Math.round(score) + "点でした！" });
+                        await navigator.share({ files: [file], title: "ミリカラ", text: "ミリカラで " + Math.round(score) + "点でした！\n▼こちらでプレイ！\nhttps://milli-games.onrender.com/games/milikara.html" });
                         return;
                     }
                 } catch (e) {}
                 shareImage();
             });
             el.btnX.addEventListener("click", function () {
-                var text = encodeURIComponent("ミリカラで " + Math.round(score).toLocaleString() + "点 RANK " + el.resultRank.textContent + " を獲得！ #ミリカラ #MilliGames https://milli-games.onrender.com/games/milikara.html");
+                var text = encodeURIComponent("ミリカラで " + Math.round(score).toLocaleString() + "点 RANK " + el.resultRank.textContent + " を獲得！ #ミリカラ #MilliGames\n▼こちらでプレイ！\nhttps://milli-games.onrender.com/games/milikara.html");
                 window.open("https://twitter.com/intent/tweet?text=" + text, "_blank");
             });
 
