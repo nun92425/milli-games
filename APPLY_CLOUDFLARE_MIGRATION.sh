@@ -11,7 +11,7 @@ set -e
 OLD="https://milli-games.onrender.com"
 NEW="https://milli-games.pages.dev"
 REDIRECT_JS='<script>var OLD_BASE="https://milli-games.onrender.com";var NEW_BASE="https://milli-games.pages.dev";(function(){if(location.hostname.indexOf("onrender.com")!==-1){var ua=navigator.userAgent||"";var isCrawler=/bot|crawler|spider|facebookexternalhit|Twitterbot|Slackbot|Discordbot|LinkedInBot|WhatsApp|Slack/i.test(ua);if(!isCrawler){location.replace(location.href.replace(OLD_BASE,NEW_BASE));}}})();</script>'
-BANNER='<div style="background:#ffeb3b;color:#000;text-align:center;padding:8px 12px;font-size:14px;z-index:9999;position:relative;border-bottom:1px solid #e6c200;">移行しました: 新サイトはこちら → <a href="https://milli-games.pages.dev" style="color:#000;font-weight:bold;text-decoration:underline;">https://milli-games.pages.dev</a></div>'
+BANNER='<div id="migration-banner" style="background:#ffeb3b;color:#000;text-align:center;padding:8px 12px;font-size:14px;z-index:9999;position:relative;border-bottom:1px solid #e6c200;">移行しました: 新サイトはこちら → <a href="https://milli-games.pages.dev" style="color:#000;font-weight:bold;text-decoration:underline;">https://milli-games.pages.dev</a></div><script>(function(){if(location.hostname.indexOf("onrender.com")===-1){var b=document.getElementById("migration-banner");if(b)b.style.display="none";}})();</script>'
 
 if [ ! -f "index.html" ]; then
   echo "NG: index.html がルートに見つかりません。リポジトリルートで実行してください。"
@@ -79,8 +79,24 @@ for f in games/*.html; do
 done
 
 echo "[4/4] 黄色バナー追加 (index.html の <body> 直後)..."
-if grep -q "移行しました" index.html 2>/dev/null; then
-  echo "  - index.html: 既にバナーあり skip"
+if grep -q "migration-banner" index.html 2>/dev/null; then
+  echo "  - index.html: 既に新バナーあり skip"
+elif grep -q "移行しました" index.html 2>/dev/null; then
+  echo "  - index.html: 旧バナーを新バナー(条件付き表示)に更新"
+  python3 -c "
+import pathlib, re
+p = pathlib.Path('index.html')
+t = p.read_text(encoding='utf-8')
+old = '<div style=\"background:#ffeb3b;color:#000;text-align:center;padding:8px 12px;font-size:14px;z-index:9999;position:relative;border-bottom:1px solid #e6c200;\">移行しました: 新サイトはこちら → <a href=\"https://milli-games.pages.dev\" style=\"color:#000;font-weight:bold;text-decoration:underline;\">https://milli-games.pages.dev</a></div>'
+new = '''${BANNER}'''
+if old in t:
+    t = t.replace(old, new, 1)
+else:
+    # fallback: 正規表現で旧バナーを探して置換
+    t = re.sub(r'<div[^>]*>移行しました.*?</div>', new, t, count=1, flags=re.DOTALL)
+p.write_text(t, encoding='utf-8')
+print('  - index.html: 旧バナー更新')
+"
 else
   python3 -c "
 import pathlib
