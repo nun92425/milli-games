@@ -966,7 +966,8 @@ ul, ol { list-style: none; }
 }
 
 /* ===== メニューポップアップボタン ===== */
-.menu-popup-btn {
+.menu-popup-btn,
+.menu-action-btn {
   display: block;
   width: 100%;
   padding: 12px 16px;
@@ -982,13 +983,15 @@ ul, ol { list-style: none; }
   margin-bottom: 8px;
 }
 
-.menu-popup-btn:hover {
+.menu-popup-btn:hover,
+.menu-action-btn:hover {
   background: var(--glass-hover);
   border-color: var(--glass-border-hover);
   padding-left: 20px;
 }
 
-.menu-popup-btn:last-child {
+.menu-popup-btn:last-child,
+.menu-action-btn:last-child {
   margin-bottom: 0;
 }
 

@@ -874,6 +874,7 @@ for (var i = 0; i < el.menuPopupBtns.length; i++) {
   (function (btn) {
     btn.addEventListener("click", function () {
       var section = btn.getAttribute("data-section");
+      if (!section) return;
       var title = "";
       var content = "";
       if (section === "news") {

@@ -276,7 +276,8 @@ function mpCloseAcct(id) {
 
 function mpCloseAllAcct() {
   ["acctModal", "loginModal", "signupModal", "mypageModal", "password-reset-dialog"].forEach(mpCloseAcct);
-  mpClose();
+  var popup = mp$("login-popup");
+  if (popup) popup.classList.remove("open");
 }
 
 function mpWelcome(msg) {
@@ -541,12 +542,11 @@ function mpOpen() {
 }
 
 function mpClose() {
-  var popup = mp$("login-popup");
-  if (popup) popup.classList.remove("open");
   mpCloseAllAcct();
 }
 
 function mpOpenAccount() {
+  if (typeof closeMenu === "function") { try { closeMenu(); } catch (e) {} }
   mpRender(getMilliproUid());
   mpCloseAllAcct();
   mpOpenAcct("acctModal");
@@ -729,6 +729,7 @@ function escapeHtml(s) {
 }
 
 function mpOpenMypage() {
+  if (typeof closeMenu === "function") { try { closeMenu(); } catch (e) {} }
   mpCloseAllAcct();
   mpRefreshMypage();
   mpOpenAcct("mypageModal");
