@@ -135,13 +135,14 @@
             <span class="menu-site-desc">ミリプロの動画まとめファンサイト</span>
           </span>
         </a>
-        <a class="menu-site-link" href="https://millipro-chronicle.onrender.com/" target="_blank" rel="noopener">
+        <!-- TODO: Chronicle公開時に<a href="https://millipro-chronicle.onrender.com/" target="_blank" rel="noopener">に戻す -->
+        <span class="menu-site-link is-disabled" aria-disabled="true" title="公開準備中">
           <img class="menu-site-logo" src="https://millipro-chronicle.onrender.com/images/icon/192.png" alt="Millipro Chronicle" loading="lazy">
           <span class="menu-site-text">
-            <span class="menu-site-name">Millipro Chronicle</span>
-            <span class="menu-site-desc">ミリプロの世界を遊ぶファンアプリ</span>
+            <span class="menu-site-name">Millipro Chronicle <span class="menu-site-badge">準備中</span></span>
+            <span class="menu-site-desc">ミリプロの世界を遊ぶファンアプリ（公開準備中）</span>
           </span>
-        </a>
+        </span>
         <a class="menu-site-link" href="https://milli-orbis-portal.onrender.com/" target="_blank" rel="noopener">
           <img class="menu-site-logo" src="https://milli-orbis-portal.onrender.com/images/rogo/Milli%20Orbis-rogo.png" alt="Milli Orbis" loading="lazy">
           <span class="menu-site-text">
@@ -164,6 +165,7 @@
         <h3>アカウント連携</h3>
         <div id="mp-menu-status" class="mp-menu-status">未連携</div>
         <button class="menu-popup-btn" onclick="mpOpen()">アカウント連携を開く</button>
+        <button class="menu-popup-btn" onclick="mpOpenMypage()" style="margin-top:6px">マイページを開く</button>
       </section>
       <section class="menu-section menu-cursor-section" id="menuCursorSection" style="display:none">
         <h3>カーソル</h3>
@@ -175,6 +177,10 @@
       </section>
       <section class="menu-section menu-credit-section" style="margin-top:auto;">
         <button id="credit-btn" class="menu-credit-btn">クレジット</button>
+        <div class="menu-legal-links">
+          <a href="legal.html">利用規約</a><span>・</span><a href="privacy.html">プライバシーポリシー</a><span>・</span><a href="rights.html">権利表記</a><br>
+          <a href="https://milli-orbis-portal.pages.dev/contact.html" target="_blank" rel="noopener">お問い合わせ（Milli Games枠）</a>
+        </div>
       </section>
     </div>
   </nav>
@@ -190,74 +196,200 @@
     </div>
   </div>
 
-  <!-- アカウント連携ポップアップ -->
-  <div id="login-popup" class="login-popup">
-    <div class="login-popup-card">
-      <div class="login-popup-header">
-        <span class="login-popup-title">アカウント連携</span>
-        <button class="login-popup-close" id="mp-popup-close" aria-label="閉じる">&times;</button>
-      </div>
-      <div class="login-popup-body">
-        <p class="login-popup-desc">
-          クリア報酬を受け取るにはログイン（または連携IDの設定）が必要です。<br>
-          本アプリ・Milli Unishare と Milli Games で同じ連携IDを共有します。
-        </p>
-        <div id="mp-account">
-          <div id="mp-account-form" style="display:none">
-            <div class="auth-tabs">
-              <button type="button" id="mp-tab-login" class="mp-tab active" onclick="mpTab('login')">ログイン</button>
-              <button type="button" id="mp-tab-signup" class="mp-tab" onclick="mpTab('signup')">新規登録</button>
-            </div>
-            <div id="mp-panel-login">
-              <div class="mp-field-row">
-                <input id="mp-email" class="mp-input" type="email" placeholder="メールアドレス" autocomplete="email">
-              </div>
-              <div class="mp-field-row">
-                <input id="mp-pass" class="mp-input" type="password" placeholder="パスワード" autocomplete="current-password">
-                <button type="button" class="mp-pass-toggle" id="mp-pass-toggle" onclick="mpToggle('mp-pass','mp-pass-toggle')">👁</button>
-              </div>
-              <div class="mp-actions">
-                <button class="mp-btn" onclick="mpSubmit(false)">ログイン</button>
-              </div>
-              <button type="button" class="mp-forgot" onclick="mpResetPassword()">パスワードをお忘れですか？</button>
-            </div>
-            <div id="mp-panel-signup" style="display:none">
-              <div class="mp-field-row">
-                <input id="mp2-email" class="mp-input" type="email" placeholder="メールアドレス" autocomplete="email">
-              </div>
-              <div class="mp-field-row">
-                <input id="mp2-pass" class="mp-input" type="password" placeholder="パスワード（6文字以上）" autocomplete="new-password">
-                <button type="button" class="mp-pass-toggle" id="mp2-pass-toggle" onclick="mpToggle('mp2-pass','mp2-pass-toggle')">👁</button>
-              </div>
-              <div class="mp-field-row">
-                <input id="mp2-pass2" class="mp-input" type="password" placeholder="パスワード（確認）" autocomplete="new-password">
-                <button type="button" class="mp-pass-toggle" id="mp2-pass2-toggle" onclick="mpToggle('mp2-pass2','mp2-pass2-toggle')">👁</button>
-              </div>
-              <div class="mp-actions">
-                <button class="mp-btn" onclick="mpSubmit(true)">新規登録</button>
-              </div>
-            </div>
-            <p id="mp-msg" class="mp-msg"></p>
+  <!-- アカウント連携4モーダル（Milli Orbis準拠・Milli Games色に寄せ） -->
+
+  <!-- メイン: 連携状態 / ゲスト案内 -->
+  <div id="acctModal" class="acct-overlay" aria-hidden="true">
+    <div class="acct-box">
+      <button class="acct-close" data-close="acctModal" aria-label="閉じる">×</button>
+      <h3><span class="acct-grad">🔗</span> Milli Gamesアカウント連携</h3>
+      <div class="acct-body">
+        <p class="acct-hint">Milli Orbisアカウントでログイン（または連携IDの設定）すると、Milli Games / Milli Unishare / Milli Orbis と同じアカウントを共有できます。<br>未ログインでも本サイトの全機能は利用できます。</p>
+        <div id="mp-account-guest">
+          <p class="acct-hint">ログインすると、クリア報酬・お気に入り・プレイ履歴を全端末で共有できて便利です。</p>
+          <div class="acct-row">
+            <button type="button" onclick="mpOpenLogin()">ログイン</button>
+            <button type="button" onclick="mpOpenSignup()">新規登録</button>
           </div>
-          <div id="mp-account-ok" style="display:none">
-            <div class="mp-row">連携ID: <b id="mp-pid"></b></div>
-            <div class="mp-actions">
-              <button class="mp-btn mp-btn-outline" onclick="mpCopyId()">IDをコピー</button>
-              <button class="mp-btn mp-btn-outline" onclick="mpLogout()">ログアウト</button>
-            </div>
+          <p class="acct-hint" style="text-align:center;margin:8px 0;">— または 連携IDを入力 —</p>
+          <div id="mp-id-input">
+            <div class="acct-pw-wrap"><input id="mp-id" placeholder="連携ID（例: TEST001）" autocomplete="off"></div>
+            <button type="button" onclick="mpSetId()" style="width:100%">連携IDを保存</button>
           </div>
-          <div id="mp-id-input" class="mp-id-input">
-            <div class="mp-hint">ログインせず連携IDを設定（本アプリの🔗連携でコピーしたIDを貼り付け）</div>
-            <div class="mp-row">
-              <input id="mp-id" class="mp-input" placeholder="連携ID（例: TEST001）" autocomplete="off">
-              <button class="mp-btn mp-btn-outline mp-btn-save" onclick="mpSetId()">保存</button>
-            </div>
+          <div class="acct-row" style="margin-top:10px;">
+            <button type="button" class="mp-oauth-btn mp-oauth-google" onclick="mpOAuthLogin('google')" aria-label="Googleでログイン">Google</button>
+            <button type="button" class="mp-oauth-btn mp-oauth-x" onclick="mpOAuthLogin('twitter')" aria-label="Xでログイン">𝕏 X</button>
           </div>
+          <p id="mp-msg" class="acct-msg"></p>
         </div>
-        <button class="login-popup-skip" onclick="mpClose()">あとで</button>
+        <div id="mp-account-ok" style="display:none;">
+          <div class="acct-profile">
+            <div id="mp-profile-icon" class="acct-avatar">?</div>
+            <div>
+              <div id="mp-profile-name" style="font-size:15px;font-weight:800;"></div>
+              <div id="mp-profile-msg" style="font-size:12px;color:var(--text-secondary);word-wrap:break-word;"></div>
+            </div>
+          </div>
+          <p style="word-wrap:break-word;font-size:13px;">連携ID: <b id="mp-pid"></b></p>
+          <div class="acct-row">
+            <button type="button" onclick="mpCopyId()">コピー</button>
+            <button type="button" onclick="mpStartEdit()">編集</button>
+            <button type="button" onclick="mpLogout()" style="background:#999;">ログアウト</button>
+          </div>
+          <div id="mp-link-providers" style="margin-top:12px;"></div>
+          <div id="mp-link-msg" class="acct-msg"></div>
+          <div class="acct-row" style="margin-top:8px;">
+            <button type="button" onclick="mpOpenMypage()" style="width:100%;">マイページ（プレイ履歴）</button>
+          </div>
+          <div id="mp-account-edit" style="display:none;margin-top:14px;padding-top:12px;border-top:2px dashed var(--glass-border);">
+            <p class="acct-hint">⇒ 名前・アイコン・一言を保存（Firebase に反映）</p>
+            <p class="acct-hint" style="font-size:.74rem;color:#a33;">※ タレント本人や公式と誤解される画像・名前は使えません（詳しくは<a href="legal.html">利用規約</a>）。</p>
+            <div class="acct-picon-row">
+              <div id="mp-picon-preview" class="acct-avatar" style="width:42px;height:42px;font-size:20px;">?</div>
+              <input id="mp-picon" placeholder="アイコン（絵文字 or 画像URL）" oninput="mpUpdatePiconPreview()" autocomplete="off">
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+              <label class="btn-ghost-sm">画像を選ぶ<input type="file" id="mp-edit-icon-file" accept="image/*" hidden onchange="mpPickIconFile(this)"></label>
+              <span class="acct-hint" style="margin:0;">または絵文字:</span>
+            </div>
+            <div class="mp-emoji-grid">
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🐺')">🐺</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🍫')">🍫</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🎧')">🎧</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('👿')">👿</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🐾')">🐾</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🦦')">🦦</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🌙')">🌙</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🧊')">🧊</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🔧')">🔧</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🧸')">🧸</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('🦭')">🦭</button>
+              <button type="button" class="mp-emoji-btn" onclick="mpPickEmoji('✨')">✨</button>
+            </div>
+            <input id="mp-pname" placeholder="表示名（ニックネーム）" maxlength="20" autocomplete="off">
+            <input id="mp-pmsg" placeholder="一言（自己紹介）" autocomplete="off">
+            <input id="mp-edit-name" style="display:none;">
+            <div class="acct-row" style="margin-top:8px;">
+              <button type="button" onclick="mpSaveProfile()">保存</button>
+              <button type="button" onclick="mpCancelEdit()" style="background:#999;">キャンセル</button>
+            </div>
+            <p id="mp-edit-note" class="acct-msg"></p>
+            <span id="mp-edit-icon-preview" style="display:none;"></span>
+          </div>
+          <p id="mp-edit-locked" class="acct-hint" style="display:none;">名前・アイコンの変更はログイン後に使えます。</p>
+        </div>
       </div>
     </div>
   </div>
+
+  <div id="loginModal" class="acct-overlay" aria-hidden="true">
+    <div class="acct-box">
+      <button class="acct-close" data-close="loginModal" aria-label="閉じる">×</button>
+      <h3>Milli Orbisアカウントにログイン</h3>
+      <div class="acct-body">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <button type="button" class="mp-oauth-btn mp-oauth-google" onclick="mpOAuthLogin('google')" style="flex:1;">Google</button>
+          <button type="button" class="mp-oauth-btn mp-oauth-x" onclick="mpOAuthLogin('twitter')" style="flex:1;">𝕏 X</button>
+        </div>
+        <div class="acct-sep"><span>または</span></div>
+        <input id="mp-email" type="email" placeholder="メールアドレス" autocomplete="email">
+        <div class="acct-pw-wrap">
+          <input id="mp-pass" type="password" placeholder="パスワード" autocomplete="current-password">
+          <button type="button" class="acct-pw-btn" onclick="mpTogglePw('mp-pass')" aria-label="表示切替">👁</button>
+        </div>
+        <span id="mp-pass-eye" style="display:none;"></span>
+        <button type="button" onclick="mpSubmitLogin()" style="width:100%;">ログイン</button>
+        <p class="acct-msg" id="mp-msg-login"></p>
+        <p class="acct-hint" style="text-align:center;">アカウントをお持ちでない場合は <a href="javascript:mpOpenSignup()">新規登録</a></p>
+        <p style="text-align:center;margin-top:6px;"><button type="button" class="btn-ghost-sm" onclick="mpOpenReset()">パスワードをお忘れですか？</button></p>
+        <div class="acct-subnav">
+          <div class="acct-row">
+            <button type="button" onclick="mpOpenSignup()" class="btn-outline-primary">新規登録はこちら</button>
+            <button type="button" onclick="mpOpenLinkId()" class="btn-outline-muted">連携IDで続ける</button>
+          </div>
+          <p class="acct-hint" style="text-align:center;margin:6px 0 0;">連携IDはログインせずに使える簡易IDです</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="signupModal" class="acct-overlay" aria-hidden="true">
+    <div class="acct-box">
+      <button class="acct-close" data-close="signupModal" aria-label="閉じる">×</button>
+      <h3>Milli Orbisアカウントに新規登録</h3>
+      <div class="acct-body">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <button type="button" class="mp-oauth-btn mp-oauth-google" onclick="mpOAuthLogin('google')" style="flex:1;">Google</button>
+          <button type="button" class="mp-oauth-btn mp-oauth-x" onclick="mpOAuthLogin('twitter')" style="flex:1;">𝕏 X</button>
+        </div>
+        <div class="acct-sep"><span>または</span></div>
+        <input id="mp-semail" type="email" placeholder="メールアドレス" autocomplete="email">
+        <input id="mp2-email" type="email" placeholder="メールアドレス" style="display:none;">
+        <div class="acct-pw-wrap">
+          <input id="mp-spass1" type="password" placeholder="パスワード（6文字以上）" autocomplete="new-password">
+          <button type="button" class="acct-pw-btn" onclick="mpTogglePw('mp-spass1')" aria-label="表示切替">👁</button>
+        </div>
+        <div class="acct-pw-wrap">
+          <input id="mp-spass2" type="password" placeholder="パスワード（確認）" autocomplete="new-password">
+          <button type="button" class="acct-pw-btn" onclick="mpTogglePw('mp-spass2')" aria-label="表示切替">👁</button>
+        </div>
+        <input id="mp2-pass" type="password" style="display:none;">
+        <input id="mp2-pass2" type="password" style="display:none;">
+        <span id="mp2-pass-eye" style="display:none;"></span>
+        <button type="button" onclick="mpSubmitSignup()" style="width:100%;">アカウントを作成</button>
+        <p class="acct-msg" id="mp-msg-signup"></p>
+        <p id="mp2-msg" class="acct-msg" style="display:none;"></p>
+        <p class="acct-hint" style="text-align:center;">既にお持ちの場合は <a href="javascript:mpOpenLogin()">ログイン</a></p>
+        <div class="acct-subnav">
+          <div class="acct-row">
+            <button type="button" onclick="mpOpenLogin()" class="btn-outline-primary">ログインはこちら</button>
+            <button type="button" onclick="mpOpenLinkId()" class="btn-outline-muted">連携IDで続ける</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mypageModal" class="acct-overlay" aria-hidden="true">
+    <div class="acct-box">
+      <button class="acct-close" data-close="mypageModal" aria-label="閉じる">×</button>
+      <h3>🏷️ マイページ</h3>
+      <div class="acct-body">
+        <div id="mp-mypage-stats"><p class="acct-hint">読み込み中…</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="password-reset-dialog" class="acct-overlay" aria-hidden="true">
+    <div class="acct-box" style="max-width:400px;">
+      <button type="button" class="acct-close" data-close="password-reset-dialog" onclick="mpCloseReset()" aria-label="閉じる">×</button>
+      <h3>🔑 パスワードを再設定</h3>
+      <div class="acct-body">
+        <p class="acct-hint">登録したメールアドレスに再設定用のリンクを送信します。</p>
+        <input id="reset-email" type="email" placeholder="メールアドレス" autocomplete="email">
+        <button type="button" style="width:100%;" onclick="mpResetSubmit()">メールを送信</button>
+        <p id="reset-msg" class="acct-msg"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 旧 login-popup 互換レイヤー（非表示）: 旧JSからの参照を壊さないため残す -->
+  <div id="login-popup" class="login-popup" style="display:none !important;" aria-hidden="true">
+    <div id="mp-popup-close" style="display:none;"></div>
+    <div id="mp-account-form" style="display:none;">
+      <div id="mp-panel-login" style="display:none;"></div>
+      <div id="mp-panel-signup" style="display:none;"></div>
+      <button id="mp-tab-login" style="display:none;"></button>
+      <button id="mp-tab-signup" style="display:none;"></button>
+      <button id="mp-pass-toggle" style="display:none;"></button>
+      <button id="mp2-pass-toggle" style="display:none;"></button>
+      <button id="mp2-pass2-toggle" style="display:none;"></button>
+    </div>
+    <div id="mp-account" style="display:none;"></div>
+    <div id="mp-account-ok-dup" style="display:none;"></div>
+  </div>
+
+  <div id="mpWelcome" class="mp-welcome" role="status" aria-live="polite"></div>
 
   <!-- 連携案内バナー（ログイン任意・§2-4） -->
   <div id="mp-banner" class="mp-banner" style="display:none">
